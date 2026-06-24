@@ -737,10 +737,10 @@ function submitOrder() {
 
   // Open Telegram with pre-filled message to the bot
   // Using t.me link so teammates just tap Send once
-  const tgUrl = 'https://t.me/+6581112661?text=' + encodeURIComponent(msg);
+  const tgUrl = 'https://t.me/Thaiorder_bot?text=' + encodeURIComponent(msg);
   // Fallback: open via bot username if user has bot open
   // We use tg://msg?to= for mobile deep link
-  const tgDeep = 'tg://msg?to=+6581112661&text=' + encodeURIComponent(msg);
+  const tgDeep = 'tg://resolve?domain=Thaiorder_bot&text=' + encodeURIComponent(msg);
 
   // Build receipt UI
   const recBody = document.getElementById('receipt-body');
