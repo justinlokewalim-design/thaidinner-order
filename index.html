@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rod Dee Thai Cafe – Team Dinner Order</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --red: #C0392B;
+    --red-light: #fdf2f1;
+    --gold: #D4A843;
+    --gold-light: #fdf8ec;
+    --green: #2E7D5A;
+    --bg: #FAFAF8;
+    --surface: #fff;
+    --border: #E8E3DC;
+    --text: #1C1C1A;
+    --muted: #7A746C;
+    --check-bg: #E8F4ED;
+    --check-border: #2E7D5A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--red);
+    color: #fff;
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .header-sub {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+
+  /* Name field */
+  .name-section {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 20px;
+  }
+  .name-section label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .name-section input {
+    width: 100%;
+    max-width: 400px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+    background: var(--bg);
+  }
+  .name-section input:focus { border-color: var(--red); }
+
+  /* Category tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+    background: var(--surface);
+    padding: 0 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--red); border-bottom-color: var(--red); }
+
+  /* Sections */
+  .section { display: none; padding: 0 16px; }
+  .section.visible { display: block; }
+
+  /* Category header */
+  .cat-header {
+    padding: 20px 4px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+  }
+  .cat-header h2 {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .cat-header p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* Sub-category label */
+  .sub-cat {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 16px 4px 8px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  .sub-cat:first-of-type { border-top: none; }
+
+  /* Menu items */
+  .item-list { display: flex; flex-direction: column; }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s;
+    border-radius: 6px;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item:hover { background: var(--red-light); }
+  .menu-item.selected { background: var(--check-bg); }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    background: #fff;
+  }
+  .menu-item.selected .checkbox {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .checkbox svg { display: none; }
+  .menu-item.selected .checkbox svg { display: block; }
+
+  .item-info { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .item-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item-popular {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold);
+    background: var(--gold-light);
+    border: 1px solid #e8d49a;
+    border-radius: 20px;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+  .item-price {
+    display: none;
+  }
+
+  /* Summary / submit */
+  .summary-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+  }
+  .summary-count {
+    font-size: 13px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .summary-count span { font-weight: 700; color: var(--text); }
+  .submit-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .submit-btn:hover { background: #a93226; transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Receipt / Thank you */
+  .receipt { display: none; padding: 24px 20px; }
+  .receipt.visible { display: block; }
+  .receipt-header {
+    text-align: center;
+    padding: 24px;
+    background: var(--green);
+    color: #fff;
+    border-radius: 16px;
+    margin-bottom: 24px;
+  }
+  .receipt-header h2 {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .receipt-header p { font-size: 13px; opacity: 0.85; }
+  .receipt-name {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+    padding: 0 4px;
+  }
+  .receipt-group { margin-bottom: 20px; }
+  .receipt-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .receipt-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0ece7;
+    color: var(--text);
+  }
+  .receipt-item:last-child { border: none; }
+  .receipt-item-price { display: none; }
+  .restart-btn {
+    display: block;
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    margin-top: 24px;
+  }
+
+  /* Responsive */
+  @media (min-width: 600px) {
+    .name-section { padding: 24px 24px; }
+    .section { padding: 0 20px; }
+    .receipt { padding: 28px 24px; }
+    .tabs { padding: 0 20px; }
+    .item-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 16px;
+    }
+    .menu-item { border-radius: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-tag">Team Dinner Order</div>
+  <h1>🌶 Rod Dee Thai Cafe</h1>
+  <div class="header-sub">MAS Account · Teo Hong Road · Pick what you'd like for dinner</div>
+</div>
+
+<div class="name-section">
+  <label for="yourName">Your EID</label>
+  <input type="text" id="yourName" placeholder="e.g. E1234567" autocomplete="off">
+</div>
+
+<div style="background:#fff8e1;border-bottom:1px solid #ffe082;padding:10px 20px;font-size:12px;color:#7a6a30;display:flex;align-items:center;gap:8px;">
+  <span style="font-size:16px;">💡</span>
+  <span>MAS Account dinner order — enter your EID and select your items.</span>
+</div>
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" onclick="showTab('food')">🍜 Food</button>
+  <button class="tab-btn" onclick="showTab('drinks')">🧋 Drinks</button>
+  <button class="tab-btn" onclick="showTab('dessert')">🍨 Desserts</button>
+</div>
+
+<!-- FOOD SECTION -->
+<div class="section visible" id="section-food">
+  <div class="cat-header">
+    <h2>Food</h2>
+    <p>Select as many dishes as you'd like for dinner</p>
+  </div>
+
+  <div class="sub-cat">⭐ Popular</div>
+  <div class="item-list" id="list-popular"></div>
+
+  <div class="sub-cat">🥗 Starters</div>
+  <div class="item-list" id="list-starter"></div>
+
+  <div class="sub-cat">🥬 Salads</div>
+  <div class="item-list" id="list-salad"></div>
+
+  <div class="sub-cat">🍚 Rice</div>
+  <div class="item-list" id="list-rice"></div>
+
+  <div class="sub-cat">🍜 Noodles</div>
+  <div class="item-list" id="list-noodle"></div>
+
+  <div class="sub-cat">🥣 Boat Noodle</div>
+  <div class="item-list" id="list-boat"></div>
+
+  <div class="sub-cat">🥦 Vegetables</div>
+  <div class="item-list" id="list-veg"></div>
+
+  <div class="sub-cat">🥚 Omelette & Tofu</div>
+  <div class="item-list" id="list-egg"></div>
+
+  <div class="sub-cat">🥩 Beef</div>
+  <div class="item-list" id="list-beef"></div>
+
+  <div class="sub-cat">🐷 Pork</div>
+  <div class="item-list" id="list-pork"></div>
+
+  <div class="sub-cat">🍗 Chicken</div>
+  <div class="item-list" id="list-chicken"></div>
+
+  <div class="sub-cat">🦐 Seafood</div>
+  <div class="item-list" id="list-seafood"></div>
+
+  <div class="sub-cat">🐟 Fish</div>
+  <div class="item-list" id="list-fish"></div>
+
+  <div class="sub-cat">🍛 Curry & Soup</div>
+  <div class="item-list" id="list-curry"></div>
+
+  <div class="sub-cat">🌱 Vegetarian Options</div>
+  <div class="item-list" id="list-veg-opt"></div>
+</div>
+
+<!-- DRINKS SECTION -->
+<div class="section" id="section-drinks">
+  <div class="cat-header">
+    <h2>Drinks</h2>
+    <p>Cold and hot drinks — pick as many as you like</p>
+  </div>
+
+  <div class="sub-cat">🧊 Cold Drinks</div>
+  <div class="item-list" id="list-cold"></div>
+
+  <div class="sub-cat">☕ Hot Drinks</div>
+  <div class="item-list" id="list-hot"></div>
+</div>
+
+<!-- DESSERT SECTION -->
+<div class="section" id="section-dessert">
+  <div class="cat-header">
+    <h2>Desserts</h2>
+    <p>Sweet endings — select one or more</p>
+  </div>
+  <div class="item-list" id="list-dessert"></div>
+</div>
+
+<!-- RECEIPT -->
+<div class="receipt" id="receipt">
+  <div class="receipt-header">
+    <h2>📋 Order Ready!</h2>
+    <p>Tap the button below — Telegram opens with your order pre-filled. Just tap <strong>Send</strong> once!</p>
+  </div>
+  <div class="receipt-name" id="receipt-name"></div>
+  <div id="receipt-body"></div>
+  <button id="tg-send-btn" style="display:block;width:100%;background:#229ED9;color:#fff;border:none;border-radius:10px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-bottom:12px;letter-spacing:0.3px;">
+  ✈️ Open Telegram &amp; Send
+</button>
+<button class="restart-btn" onclick="restart()">← Submit Another Order</button>
+</div>
+
+<div class="summary-bar" id="summaryBar">
+  <div class="summary-count"><span id="countNum">0</span> items selected</div>
+  <button class="submit-btn" onclick="submitOrder()">Submit Order →</button>
+</div>
+
+<script>
+const MENU = {
+  popular: [
+    { name: "N6. Phat Thai", price: "from $12.80", popular: true },
+    { name: "CS6. Green Curry with Chicken", price: "$13", desc: "Spicy creamy chicken curry", popular: true },
+    { name: "N11. Beef Boat Noodle Soup", price: "from $13", popular: true },
+    { name: "R4. Thai Basil with Rice", price: "from $12.80", desc: "Served with egg", popular: true },
+    { name: "N13. Pork Boat Noodle Soup", price: "from $13", popular: true },
+    { name: "R7. Thai Fried Rice with Crab Meat", price: "$15.80", desc: "Served with egg", popular: true },
+  ],
+  starter: [
+    { name: "S1. Crispy Prawn Cake", price: "$12.50", desc: "3 pcs" },
+    { name: "S2. Thai Fish Cake", price: "$8.80", desc: "6 pcs" },
+    { name: "S3. Pork Skewer Moo Ping", price: "$10", desc: "3 pcs" },
+    { name: "S4. Spring Roll", price: "$8.50", desc: "6 pcs" },
+    { name: "S5. Crispy Mid Joint Wing", price: "$12.80", desc: "10 pcs" },
+    { name: "S6. Boneless Stuffed Chicken", price: "$12", desc: "3 pcs" },
+    { name: "S7. Pandan Chicken", price: "$12.50", desc: "4 pcs" },
+    { name: "S9. Sticky Rice", price: "$2.20", desc: "Fragrant glutinous rice" },
+    { name: "S10. French Fries", price: "$7.80", desc: "Crispy golden potato sticks" },
+    { name: "S11. Rod Dee Combo A", price: "$38.80", desc: "Fries, Fish Cake, Spring Rolls, Wings · 2-3pax" },
+    { name: "S12. Rod Dee Combo B", price: "$48.80", desc: "Fries, Fish Cake, Spring Rolls, Wings, Moo Ping, Wanton · 3-4pax" },
+    { name: "S15. Fried Fish Wanton", price: "$6.80", desc: "Crispy fish-filled dumplings" },
+  ],
+  salad: [
+    { name: "SC1. Mango Salad", price: "$10.80" },
+    { name: "SC2. Papaya Salad", price: "$10.80" },
+    { name: "SC3. Tofu Mango Salad", price: "$13.80" },
+    { name: "SC4. Grill Pork Salad", price: "$14" },
+    { name: "SC5. Minced Pork Salad", price: "$13.80" },
+    { name: "SC6. Yum Woon Sen", price: "$13.80", desc: "Glass noodle with minced pork & seafood" },
+  ],
+  rice: [
+    { name: "R1. Tom Yum Fried Rice", price: "from $12.80", desc: "Served with fried egg" },
+    { name: "R2. Pineapple Fried Rice", price: "from $12.80", desc: "Served with fried egg" },
+    { name: "R3. Olive Fried Rice", price: "from $12.80", desc: "Served with egg" },
+    { name: "R4. Thai Basil with Rice", price: "from $12.80", desc: "Served with egg" },
+    { name: "R5. Sweet & Sour with Rice", price: "from $12.80", desc: "Served with egg" },
+    { name: "R6. Black Pepper with Rice", price: "from $12.80", desc: "Served with egg" },
+    { name: "R7. Thai Fried Rice with Crab Meat", price: "$15.80", desc: "Served with egg" },
+    { name: "R8. Scramble Egg with Thai Suki Sauce Prawn Rice", price: "$13.80" },
+    { name: "R11. Thai Fried Rice", price: "from $12.80", desc: "Served with fried egg" },
+    { name: "R9. Fragrance White Rice", price: "$1.20", desc: "1 bowl" },
+    { name: "R10. Fried Egg", price: "$1.20", desc: "1 piece" },
+  ],
+  noodle: [
+    { name: "N1. Thai Style Fried Keow Teow", price: "$12.80" },
+    { name: "N2. Thai Style Fried Tang Hoon", price: "$12.80" },
+    { name: "N3. Thai Stir Fried Mama Noodle", price: "from $12.80" },
+    { name: "N4. Thai Hor Fun (Soup)", price: "from $12.80" },
+    { name: "N5. Tom Yum Noodle", price: "from $12.80", desc: "Rice noodle" },
+    { name: "N6. Phat Thai", price: "from $12.80", popular: true },
+    { name: "N7. Seafood TomYum MAMA Noodles", price: "$22.80" },
+  ],
+  boat: [
+    { name: "N11. Beef Boat Noodle Soup", price: "from $13" },
+    { name: "N12. Beef Boat Noodle Dry", price: "from $12" },
+    { name: "N13. Pork Boat Noodle Soup", price: "from $13" },
+    { name: "N14. Pork Boat Noodle Dry", price: "from $13" },
+  ],
+  veg: [
+    { name: "V1. Stir Fried Mixed Vegetables with Oyster Sauce", price: "$11.80" },
+    { name: "V2. Stir Fried Thai Style Kang Kong", price: "$11.80" },
+    { name: "V3. Stir Fried Kai Lan with Oyster Sauce", price: "$11.80" },
+    { name: "V4. Long Bean with Thai Chilli Paste", price: "$11.80" },
+    { name: "V5. Bean Sprout with Garlic", price: "$11.80" },
+    { name: "V6. Roasted Pork Kai Lan", price: "$18" },
+  ],
+  egg: [
+    { name: "OT1. Plain Omelette", price: "$10" },
+    { name: "OT2. Minced Pork Omelette", price: "$12.80" },
+    { name: "OT3. Prawn Omelette", price: "$13.80" },
+    { name: "OT4. Crab Meat Omelette", price: "$18" },
+    { name: "OT5. Deep Fried Tofu with Minced Pork", price: "$11" },
+    { name: "OT6. Deep Fried Tofu with Sweet & Sour Sauce", price: "$13.80" },
+    { name: "OT7. Scramble Egg with Thai Suki Sauce", price: "$16.80" },
+    { name: "OT8. Kampong Style Omelette with Onion", price: "$11" },
+  ],
+  beef: [
+    { name: "B1. Basil Slice Beef", price: "$13", desc: "Aromatic basil beef slices" },
+    { name: "B2. Black Pepper Slice Beef", price: "$13", desc: "Spicy black pepper beef" },
+    { name: "B3. Slice Beef with Oyster Sauce", price: "$13", desc: "Savory beef with oyster sauce" },
+  ],
+  pork: [
+    { name: "P1. Basil Minced Pork", price: "$13.80" },
+    { name: "P2. Black Pepper Slice Pork", price: "$13.80" },
+    { name: "P3. Slice Pork with Oyster Sauce", price: "$13.80" },
+    { name: "P4. Sweet & Sour Pork", price: "$13.80" },
+    { name: "P5. Fried Pork Slice with Thai Chilli Paste", price: "$14.80" },
+    { name: "P6. Deep Fried Pork Slice with Garlic", price: "$12.80" },
+    { name: "P7. Grilled Pork Collar", price: "$13" },
+  ],
+  chicken: [
+    { name: "C1. Basil Minced Chicken", price: "$13.80" },
+    { name: "C2. Black Pepper Chicken", price: "$13.80" },
+    { name: "C3. Sweet & Sour Chicken", price: "$13.80" },
+    { name: "C4. Cashew Nut Chicken", price: "$13.80" },
+    { name: "C5. Chicken Tossed with Thai Chilli Paste", price: "$14.80" },
+  ],
+  seafood: [
+    { name: "SF1. Basil Seafood", price: "$16.80" },
+    { name: "SF2. Deep Fried Prawn with Sweet & Sour Sauce", price: "$16.80" },
+    { name: "SF3. Deep Fried Prawn with Garlic", price: "$18.80" },
+    { name: "SF4. Stir Fried Prawn with Thai Chili Paste", price: "$17" },
+    { name: "SF5. Lala with Thai Chilli Paste", price: "$16.80", desc: "Spicy clams in chili paste" },
+    { name: "SF6. Claypot Glass Noodle with Prawn", price: "$19.80" },
+    { name: "SF7. Stir Fried Squid with Thai Chilli Paste", price: "$21.80" },
+    { name: "SF8. Steam Sotong with Thai Green Lime", price: "$22" },
+    { name: "S10. Steam Prawn with Thai Green Lime", price: "$22.80" },
+  ],
+  fish: [
+    { name: "F1. Slice Fish with Sweet & Sour Sauce", price: "$15.80" },
+    { name: "F2. Slice Fish with Black Pepper Sauce", price: "$15.80" },
+    { name: "F3. Deep Fried Seabass with Mango Salad", price: "$38" },
+    { name: "F4. Deep Fried Seabass with Thai 3 Taste Sauce", price: "$36" },
+    { name: "F5. Steam Seabass with Lemon Garlic", price: "$35" },
+    { name: "F6. Deep Fried Seabass with Soya Sauce", price: "$36" },
+  ],
+  curry: [
+    { name: "CS1. Tom Yum Clear Soup with Chicken", price: "$13" },
+    { name: "CS2. Tom Yum Clear Soup with Seafood", price: "$15" },
+    { name: "CS3. Red Tom Yum Soup with Chicken", price: "$13" },
+    { name: "CS4. Red Tom Yum Soup with Seafood", price: "$15" },
+    { name: "CS5. Tom Ka Gai (Chicken Only)", price: "$15", desc: "Creamy chicken coconut soup" },
+    { name: "CS6. Green Curry with Chicken", price: "$13", popular: true },
+    { name: "CS7. Green Curry with Seafood", price: "$15" },
+    { name: "CS8. Thai Tofu and Pork Soup", price: "$13.80" },
+    { name: "CS9. Tom Sapp with Chicken", price: "$13" },
+    { name: "CS10. Rod Dee Tom Yum Goong Seafood", price: "$21", desc: "Signature dish" },
+  ],
+  "veg-opt": [
+    { name: "Pineapple Fried Rice (Veg)", price: "from $12.80" },
+    { name: "Olive Fried Rice (Veg)", price: "from $12.80" },
+    { name: "Thai Stir Fried Mama Noodle (Veg)", price: "from $12.80" },
+    { name: "Thai Hor Fun (Veg)", price: "from $12.80" },
+    { name: "Phat Thai (Veg)", price: "$12.80" },
+    { name: "Thai Style Fried Kweo Teow (Veg)", price: "from $12.80" },
+    { name: "Plain Omelette (Veg)", price: "$10" },
+    { name: "Green Curry (Veg)", price: "$13" },
+    { name: "Stir Fried Kai Lan with Oyster Sauce (Veg)", price: "$11.80" },
+    { name: "Deep Fried Tofu with Sweet and Sour Sauce (Veg)", price: "$13.80" },
+    { name: "Mango Salad (Veg)", price: "$10.80" },
+    { name: "Papaya Salad (Veg)", price: "$10.80" },
+    { name: "Stir Fried Long Bean with Thai Chilli Paste (Veg)", price: "$11.80" },
+    { name: "Stir Fried Bean Sprout with Garlic (Veg)", price: "$11.80" },
+    { name: "Sticky Rice (Veg)", price: "$2.50" },
+    { name: "French Fries (Veg)", price: "$7.80" },
+  ],
+  cold: [
+    { name: "D1. Mineral Water", price: "$2" },
+    { name: "D3. Thai Ice Milk Tea", price: "$3.80" },
+    { name: "D4. Thai Green Milk Tea", price: "$3.80" },
+    { name: "D5. Thai Ice Coffee", price: "$4.50" },
+    { name: "D6. Thai Lemongrass", price: "$3.80" },
+    { name: "D13. Iced Thai Lemon Tea", price: "$3.80" },
+    { name: "D7. Coke Can", price: "$2.80" },
+    { name: "D7. Coke Zero", price: "$2.80" },
+    { name: "D7. Sprite Can", price: "$2.80" },
+    { name: "D7. Green Tea Can", price: "$2.80" },
+    { name: "D7. Oolong Tea Can", price: "$2.80" },
+    { name: "D7. A&W Can", price: "$2.80" },
+    { name: "D11. Mango Smoothie", price: "$7" },
+    { name: "D12. Fresh Coconut", price: "$6.90" },
+  ],
+  hot: [
+    { name: "D14. Hot Green Tea (Sachet)", price: "$2.30" },
+    { name: "D15. Hot Thai Milk Tea", price: "$3" },
+    { name: "D16. Hot Thai Green Milk Tea", price: "$3" },
+    { name: "D17. Hot Thai Lemongrass", price: "$3" },
+    { name: "D18. Hot Thai Coffee", price: "$3.80" },
+  ],
+  dessert: [
+    { name: "DM2. Red Ruby", price: "$8", desc: "1 portion" },
+    { name: "DM6. Thai Cendol", price: "$7.50", desc: "1 portion" },
+    { name: "DM7. Durian Cendol", price: "$9.90", desc: "1 portion" },
+  ]
+};
+
+const SECTION_LABELS = {
+  popular: "Popular",
+  starter: "Starters",
+  salad: "Salads",
+  rice: "Rice",
+  noodle: "Noodles",
+  boat: "Boat Noodle",
+  veg: "Vegetables",
+  egg: "Omelette & Tofu",
+  beef: "Beef",
+  pork: "Pork",
+  chicken: "Chicken",
+  seafood: "Seafood",
+  fish: "Fish",
+  curry: "Curry & Soup",
+  "veg-opt": "Vegetarian Options",
+  cold: "Cold Drinks",
+  hot: "Hot Drinks",
+  dessert: "Desserts"
+};
+
+const selected = new Set();
+
+function buildItems(key) {
+  const list = document.getElementById('list-' + key);
+  if (!list) return;
+  MENU[key].forEach((item, i) => {
+    const id = key + ':' + i;
+    const el = document.createElement('div');
+    el.className = 'menu-item';
+    el.dataset.id = id;
+    el.dataset.name = item.name;
+    el.dataset.price = item.price;
+    el.dataset.group = SECTION_LABELS[key] || key;
+    el.innerHTML = `
+      <div class="checkbox">
+        <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+          <path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
+      </div>
+      ${item.popular ? '<div class="item-popular">⭐ Popular</div>' : ''}
+      <div class="item-price">${item.price}</div>
+    `;
+    el.addEventListener('click', () => toggleItem(el, id));
+    list.appendChild(el);
+  });
+}
+
+function toggleItem(el, id) {
+  if (selected.has(id)) {
+    selected.delete(id);
+    el.classList.remove('selected');
+  } else {
+    selected.add(id);
+    el.classList.add('selected');
+  }
+  document.getElementById('countNum').textContent = selected.size;
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + tab).classList.add('visible');
+  event.currentTarget.classList.add('active');
+}
+
+function submitOrder() {
+  const name = document.getElementById('yourName').value.trim();
+  if (!name) {
+    document.getElementById('yourName').focus();
+    document.getElementById('yourName').style.borderColor = '#C0392B';
+    setTimeout(() => document.getElementById('yourName').style.borderColor = '', 1500);
+    return;
+  }
+  if (selected.size === 0) {
+    alert('Please select at least one item!');
+    return;
+  }
+
+  // Group selections by category
+  const groups = {};
+  selected.forEach(id => {
+    const el = document.querySelector('[data-id="' + id + '"]');
+    const group = el.dataset.group;
+    if (!groups[group]) groups[group] = [];
+    groups[group].push(el.dataset.name);
+  });
+
+  // Build Telegram message
+  let msg = '🌶 Rod Dee Thai Cafe Dinner Order\n🏢 MAS Account\n👤 EID: ' + name + '\n';
+  Object.entries(groups).forEach(([group, items]) => {
+    msg += '\n— ' + group + ' —\n';
+    items.forEach(i => msg += '• ' + i + '\n');
+  });
+  msg += '\n(Sent via Team Order Form)';
+
+  // Open Telegram with pre-filled message to the bot
+  // Using t.me link so teammates just tap Send once
+  const tgUrl = 'https://t.me/+6581112661?text=' + encodeURIComponent(msg);
+  // Fallback: open via bot username if user has bot open
+  // We use tg://msg?to= for mobile deep link
+  const tgDeep = 'tg://msg?to=+6581112661&text=' + encodeURIComponent(msg);
+
+  // Build receipt UI
+  const recBody = document.getElementById('receipt-body');
+  recBody.innerHTML = '';
+  Object.entries(groups).forEach(([group, items]) => {
+    const div = document.createElement('div');
+    div.className = 'receipt-group';
+    div.innerHTML = '<div class="receipt-group-title">' + group + '</div>' +
+      items.map(i => '<div class="receipt-item"><span>' + i + '</span></div>').join('');
+    recBody.appendChild(div);
+  });
+
+  document.getElementById('receipt-name').textContent = 'EID: ' + name;
+
+  // Store tgUrl for the Send button
+  document.getElementById('tg-send-btn').onclick = function() {
+    window.open(tgUrl, '_blank');
+  };
+
+  // Hide form, show receipt
+  document.querySelector('.header').style.display = 'none';
+  document.querySelector('.name-section').style.display = 'none';
+  document.getElementById('tabs').style.display = 'none';
+  document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+  document.getElementById('summaryBar').style.display = 'none';
+  document.getElementById('receipt').classList.add('visible');
+}
+
+function restart() {
+  document.getElementById('yourName').value = '';
+  selected.clear();
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById('countNum').textContent = '0';
+
+  document.querySelector('.header').style.display = '';
+  document.querySelector('.name-section').style.display = '';
+  document.getElementById('tabs').style.display = '';
+  document.querySelector('#section-food').classList.add('visible');
+  document.getElementById('summaryBar').style.display = '';
+  document.getElementById('receipt').classList.remove('visible');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  document.querySelectorAll('.section').forEach(s => s.style.display = '');
+  document.querySelector('#section-food').style.display = '';
+  showInitialTab();
+}
+
+function showInitialTab() {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById('section-food').classList.add('visible');
+}
+
+// Build all lists
+Object.keys(MENU).forEach(buildItems);
+</script>
+</body>
+</html>
