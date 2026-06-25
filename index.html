@@ -34,184 +34,186 @@ async function saveOrdersToStorage(o) { localStorage.setItem(STORAGE_KEY,JSON.st
 // FULL MENU with images where available
 const MENU = {
   "⭐ Popular": [
-    {name:"N6. Phat Thai"},
-    {name:"CS6. Green Curry with Chicken"},
-    {name:"N11. Beef Boat Noodle Soup"},
-    {name:"R4. Thai Basil with Rice"},
-    {name:"N13. Pork Boat Noodle Soup"},
-    {name:"R7. Thai Fried Rice with Crab Meat"},
-    {name:"DM1. Mango Sticky Rice"},
+    {name:"N6. Phat Thai", price:"$12.80"},
+    {name:"CS6. Green Curry with Chicken", price:"$13.00"},
+    {name:"N11. Beef Boat Noodle Soup", price:"$13.00"},
+    {name:"R4. Thai Basil with Rice", price:"$12.80"},
+    {name:"N13. Pork Boat Noodle Soup", price:"$13.00"},
+    {name:"R7. Thai Fried Rice with Crab Meat", price:"$15.80"},
+    {name:"DM1. Mango Sticky Rice", price:"$8.00"},
   ],
   "🥗 Starter": [
-    {name:"S1. Crispy Prawn Cake"},
-    {name:"S2. Thai Fish Cake"},
-    {name:"S3. Pork Skewer Moo Ping"},
-    {name:"S4. Spring Roll"},
-    {name:"S5. Crispy Mid Joint Wing"},
-    {name:"S6. Boneless Stuffed Chicken"},
-    {name:"S7. Pandan Chicken"},
-    {name:"S9. Sticky Rice"},
-    {name:"S10. French Fries"},
-    {name:"S11. Rod Dee Combo A (2-3pax)"},
-    {name:"S12. Rod Dee Combo B (3-4pax)"},
-    {name:"S15. Fried Fish Wanton"},
+    {name:"S1. Crispy Prawn Cake", price:"$12.50"},
+    {name:"S2. Thai Fish Cake", price:"$8.80"},
+    {name:"S3. Pork Skewer Moo Ping", price:"$10.00"},
+    {name:"S4. Spring Roll", price:"$8.50"},
+    {name:"S5. Crispy Mid Joint Wing", price:"$12.80"},
+    {name:"S6. Boneless Stuffed Chicken", price:"$12.00"},
+    {name:"S7. Pandan Chicken", price:"$12.50"},
+    {name:"S9. Sticky Rice", price:"$2.20"},
+    {name:"S10. French Fries", price:"$7.80"},
+    {name:"S11. Rod Dee Combo A (2-3pax)", price:"$38.80"},
+    {name:"S12. Rod Dee Combo B (3-4pax)", price:"$48.80"},
+    {name:"S15. Fried Fish Wanton", price:"$6.80"},
   ],
   "🌱 Vegetarian": [
-    {name:"Pineapple Fried Rice (Veg)"},
-    {name:"Olive Fried Rice (Veg)"},
-    {name:"Thai Stir Fried Mama Noodle (Veg)"},
-    {name:"Thai Hor Fun (Veg)"},
-    {name:"Phat Thai (Veg)"},
-    {name:"Thai Style Fried Kweo Teow (Veg)"},
-    {name:"Plain Omelette (Veg)"},
-    {name:"Green Curry (Veg)"},
-    {name:"Stir Fried Kai Lan with Oyster Sauce (Veg)"},
-    {name:"Spring Rolls (Veg)"},
-    {name:"Mango Salad (Veg)"},
-    {name:"Papaya Salad (Veg)"},
-    {name:"Stir Fried Long Bean with Thai Chilli Paste (Veg)"},
-    {name:"Stir Fried Bean Sprout with Garlic (Veg)"},
-    {name:"Sticky Rice (Veg)"},
-    {name:"French Fries (Veg)"},
-    {name:"Deep Fried Tofu with Sweet and Sour Sauce (Veg)"},
+    {name:"Pineapple Fried Rice (Veg)", price:"$12.80"},
+    {name:"Olive Fried Rice (Veg)", price:"$12.80"},
+    {name:"Thai Stir Fried Mama Noodle (Veg)", price:"$12.80"},
+    {name:"Thai Hor Fun (Veg)", price:"$12.80"},
+    {name:"Phat Thai (Veg)", price:"$12.80"},
+    {name:"Thai Style Fried Kweo Teow (Veg)", price:"$12.80"},
+    {name:"Plain Omelette (Veg)", price:"$10.00"},
+    {name:"Green Curry (Veg)", price:"$13.00"},
+    {name:"Stir Fried Kai Lan with Oyster Sauce (Veg)", price:"$11.80"},
+    {name:"Spring Rolls (Veg)", price:"$8.50"},
+    {name:"Mango Salad (Veg)", price:"$10.80"},
+    {name:"Papaya Salad (Veg)", price:"$10.80"},
+    {name:"Stir Fried Long Bean with Thai Chilli Paste (Veg)", price:"$11.80"},
+    {name:"Stir Fried Bean Sprout with Garlic (Veg)", price:"$11.80"},
+    {name:"Sticky Rice (Veg)", price:"$2.50"},
+    {name:"French Fries (Veg)", price:"$7.80"},
+    {name:"Deep Fried Tofu with Sweet and Sour Sauce (Veg)", price:"$13.80"},
   ],
-
   "🥗 Salad Corner": [
-    {name:"SC1. Mango Salad"},
-    {name:"SC2. Papaya Salad"},
-    {name:"SC3. Tofu Mango Salad"},
-    {name:"SC4. Grill Pork Salad"},
-    {name:"SC5. Minced Pork Salad"},
-    {name:"SC6. Yum Woon Sen"},
+    {name:"SC1. Mango Salad", price:"$10.80"},
+    {name:"SC2. Papaya Salad", price:"$10.80"},
+    {name:"SC3. Tofu Mango Salad", price:"$13.80"},
+    {name:"SC4. Grill Pork Salad", price:"$14.00"},
+    {name:"SC5. Minced Pork Salad", price:"$13.80"},
+    {name:"SC6. Yum Woon Sen", price:"$13.80"},
   ],
   "🍚 Rice": [
-    {name:"R1. Tom Yum Fried Rice"},
-    {name:"R2. Pineapple Fried Rice"},
-    {name:"R3. Olive Fried Rice"},
-    {name:"R4. Thai Basil with Rice"},
-    {name:"R5. Sweet & Sour with Rice"},
-    {name:"R6. Black Pepper with Rice"},
-    {name:"R7. Thai Fried Rice with Crab Meat"},
-    {name:"R8. Scramble Egg with Thai Suki Sauce Prawn Rice"},
-    {name:"R11. Thai Fried Rice"},
-    {name:"R9. Fragrance White Rice"},
-    {name:"R10. Fried Egg"},
+    {name:"R1. Tom Yum Fried Rice", price:"$12.80"},
+    {name:"R2. Pineapple Fried Rice", price:"$12.80"},
+    {name:"R3. Olive Fried Rice", price:"$12.80"},
+    {name:"R4. Thai Basil with Rice", price:"$12.80"},
+    {name:"R5. Sweet & Sour with Rice", price:"$12.80"},
+    {name:"R6. Black Pepper with Rice", price:"$12.80"},
+    {name:"R7. Thai Fried Rice with Crab Meat", price:"$15.80"},
+    {name:"R8. Scramble Egg with Thai Suki Sauce Prawn Rice", price:"$13.80"},
+    {name:"R11. Thai Fried Rice", price:"$12.80"},
+    {name:"R9. Fragrance White Rice", price:"$1.20"},
+    {name:"R10. Fried Egg", price:"$1.20"},
   ],
   "🍜 Noodles": [
-    {name:"N1. Thai Style Fried Keow Teow"},
-    {name:"N2. Thai Style Fried Tang Hoon"},
-    {name:"N3. Thai Stir Fried Mama Noodle"},
-    {name:"N4. Thai Hor Fun (Soup)"},
-    {name:"N5. Tom Yum Noodle"},
-    {name:"N6. Phat Thai"},
-    {name:"N7. Seafood TomYum MAMA Noodles"},
+    {name:"N1. Thai Style Fried Keow Teow", price:"$12.80"},
+    {name:"N2. Thai Style Fried Tang Hoon", price:"$12.80"},
+    {name:"N3. Thai Stir Fried Mama Noodle", price:"$12.80"},
+    {name:"N4. Thai Hor Fun (Soup)", price:"$12.80"},
+    {name:"N5. Tom Yum Noodle", price:"$12.80"},
+    {name:"N6. Phat Thai", price:"$12.80"},
+    {name:"N7. Seafood TomYum MAMA Noodles", price:"$22.80"},
   ],
   "🥣 Boat Noodle": [
-    {name:"N11. Beef Boat Noodle Soup"},
-    {name:"N12. Beef Boat Noodle Dry"},
-    {name:"N13. Pork Boat Noodle Soup"},
-    {name:"N14. Pork Boat Noodle Dry"},
+    {name:"N11. Beef Boat Noodle Soup", price:"$13.00"},
+    {name:"N12. Beef Boat Noodle Dry", price:"$12.00"},
+    {name:"N13. Pork Boat Noodle Soup", price:"$13.00"},
+    {name:"N14. Pork Boat Noodle Dry", price:"$13.00"},
   ],
   "🥦 Vegetables": [
-    {name:"V1. Stir Fried Mixed Vegetables with Oyster Sauce"},
-    {name:"V2. Stir Fried Thai Style Kang Kong"},
-    {name:"V3. Stir Fried Kai Lan with Oyster Sauce"},
-    {name:"V4. Long Bean with Thai Chilli Paste"},
-    {name:"V5. Bean Sprout with Garlic"},
-    {name:"V6. Roasted Pork Kai Lan"},
+    {name:"V1. Stir Fried Mixed Vegetables with Oyster Sauce", price:"$11.80"},
+    {name:"V2. Stir Fried Thai Style Kang Kong", price:"$11.80"},
+    {name:"V3. Stir Fried Kai Lan with Oyster Sauce", price:"$11.80"},
+    {name:"V4. Long Bean with Thai Chilli Paste", price:"$11.80"},
+    {name:"V5. Bean Sprout with Garlic", price:"$11.80"},
+    {name:"V6. Roasted Pork Kai Lan", price:"$18.00"},
   ],
   "🥚 Omelette & Tofu": [
-    {name:"OT1. Plain Omelette"},
-    {name:"OT2. Minced Pork Omelette"},
-    {name:"OT3. Prawn Omelette"},
-    {name:"OT4. Crab Meat Omelette"},
-    {name:"OT5. Deep Fried Tofu with Minced Pork"},
-    {name:"OT6. Deep Fried Tofu with Sweet & Sour Sauce"},
-    {name:"OT7. Scramble Egg with Thai Suki Sauce"},
-    {name:"OT8. Kampong Style Omelette with Onion"},
+    {name:"OT1. Plain Omelette", price:"$10.00"},
+    {name:"OT2. Minced Pork Omelette", price:"$12.80"},
+    {name:"OT3. Prawn Omelette", price:"$13.80"},
+    {name:"OT4. Crab Meat Omelette", price:"$18.00"},
+    {name:"OT5. Deep Fried Tofu with Minced Pork", price:"$11.00"},
+    {name:"OT6. Deep Fried Tofu with Sweet & Sour Sauce", price:"$13.80"},
+    {name:"OT7. Scramble Egg with Thai Suki Sauce", price:"$16.80"},
+    {name:"OT8. Kampong Style Omelette with Onion", price:"$11.00"},
   ],
   "🥩 Beef": [
-    {name:"B1. Basil Slice Beef"},
-    {name:"B2. Black Pepper Slice Beef"},
-    {name:"B3. Slice Beef with Oyster Sauce"},
+    {name:"B1. Basil Slice Beef", price:"$13.00"},
+    {name:"B2. Black Pepper Slice Beef", price:"$13.00"},
+    {name:"B3. Slice Beef with Oyster Sauce", price:"$13.00"},
   ],
   "🐷 Pork": [
-    {name:"P1. Basil Minced Pork"},
-    {name:"P2. Black Pepper Slice Pork"},
-    {name:"P3. Slice Pork with Oyster Sauce"},
-    {name:"P4. Sweet & Sour Pork"},
-    {name:"P5. Fried Pork Slice with Thai Chilli Paste"},
-    {name:"P6. Deep Fried Pork Slice with Garlic"},
-    {name:"P7. Grilled Pork Collar"},
+    {name:"P1. Basil Minced Pork", price:"$13.80"},
+    {name:"P2. Black Pepper Slice Pork", price:"$13.80"},
+    {name:"P3. Slice Pork with Oyster Sauce", price:"$13.80"},
+    {name:"P4. Sweet & Sour Pork", price:"$13.80"},
+    {name:"P5. Fried Pork Slice with Thai Chilli Paste", price:"$14.80"},
+    {name:"P6. Deep Fried Pork Slice with Garlic", price:"$12.80"},
+    {name:"P7. Grilled Pork Collar", price:"$13.00"},
   ],
   "🍗 Chicken": [
-    {name:"C1. Basil Minced Chicken"},
-    {name:"C2. Black Pepper Chicken"},
-    {name:"C3. Sweet & Sour Chicken"},
-    {name:"C4. Cashew Nut Chicken"},
-    {name:"C5. Chicken Tossed with Thai Chilli Paste"},
+    {name:"C1. Basil Minced Chicken", price:"$13.80"},
+    {name:"C2. Black Pepper Chicken", price:"$13.80"},
+    {name:"C3. Sweet & Sour Chicken", price:"$13.80"},
+    {name:"C4. Cashew Nut Chicken", price:"$13.80"},
+    {name:"C5. Chicken Tossed with Thai Chilli Paste", price:"$14.80"},
   ],
   "🦐 Seafood": [
-    {name:"SF1. Basil Seafood"},
-    {name:"SF2. Deep Fried Prawn with Sweet & Sour Sauce"},
-    {name:"SF3. Deep Fried Prawn with Garlic"},
-    {name:"SF4. Stir Fried Prawn with Thai Chili Paste"},
-    {name:"SF5. Lala with Thai Chilli Paste"},
-    {name:"SF6. Claypot Glass Noodle with Prawn"},
-    {name:"SF7. Stir Fried Squid with Thai Chilli Paste"},
-    {name:"SF8. Steam Sotong with Thai Green Lime"},
-    {name:"S10. Steam Prawn with Thai Green Lime"},
+    {name:"SF1. Basil Seafood", price:"$16.80"},
+    {name:"SF2. Deep Fried Prawn with Sweet & Sour Sauce", price:"$16.80"},
+    {name:"SF3. Deep Fried Prawn with Garlic", price:"$18.80"},
+    {name:"SF4. Stir Fried Prawn with Thai Chili Paste", price:"$17.00"},
+    {name:"SF5. Lala with Thai Chilli Paste", price:"$16.80"},
+    {name:"SF6. Claypot Glass Noodle with Prawn", price:"$19.80"},
+    {name:"SF7. Stir Fried Squid with Thai Chilli Paste", price:"$21.80"},
+    {name:"SF8. Steam Sotong with Thai Green Lime", price:"$22.00"},
+    {name:"S10. Steam Prawn with Thai Green Lime", price:"$22.80"},
   ],
   "🐟 Fish": [
-    {name:"F1. Slice Fish with Sweet & Sour Sauce"},
-    {name:"F2. Slice Fish with Black Pepper Sauce"},
-    {name:"F3. Deep Fried Seabass with Mango Salad"},
-    {name:"F4. Deep Fried Seabass with Thai 3 Taste Sauce"},
-    {name:"F5. Steam Seabass with Lemon Garlic"},
-    {name:"F6. Deep Fried Seabass with Soya Sauce"},
+    {name:"F1. Slice Fish with Sweet & Sour Sauce", price:"$15.80"},
+    {name:"F2. Slice Fish with Black Pepper Sauce", price:"$15.80"},
+    {name:"F3. Deep Fried Seabass with Mango Salad", price:"$38.00"},
+    {name:"F4. Deep Fried Seabass with Thai 3 Taste Sauce", price:"$36.00"},
+    {name:"F5. Steam Seabass with Lemon Garlic", price:"$35.00"},
+    {name:"F6. Deep Fried Seabass with Soya Sauce", price:"$36.00"},
   ],
   "🍛 Curry & Soup": [
-    {name:"CS1. Tom Yum Clear Soup with Chicken"},
-    {name:"CS2. Tom Yum Clear Soup with Seafood"},
-    {name:"CS3. Red Tom Yum Soup with Chicken"},
-    {name:"CS4. Red Tom Yum Soup with Seafood"},
-    {name:"CS5. Tom Ka Gai (Chicken Only)"},
-    {name:"CS6. Green Curry with Chicken"},
-    {name:"CS7. Green Curry with Seafood"},
-    {name:"CS8. Thai Tofu and Pork Soup"},
-    {name:"CS9. Tom Sapp with Chicken"},
-    {name:"CS10. Rod Dee Tom Yum Goong Seafood"},
+    {name:"CS1. Tom Yum Clear Soup with Chicken", price:"$13.00"},
+    {name:"CS2. Tom Yum Clear Soup with Seafood", price:"$15.00"},
+    {name:"CS3. Red Tom Yum Soup with Chicken", price:"$13.00"},
+    {name:"CS4. Red Tom Yum Soup with Seafood", price:"$15.00"},
+    {name:"CS5. Tom Ka Gai (Chicken Only)", price:"$15.00"},
+    {name:"CS6. Green Curry with Chicken", price:"$13.00"},
+    {name:"CS7. Green Curry with Seafood", price:"$15.00"},
+    {name:"CS8. Thai Tofu and Pork Soup", price:"$13.80"},
+    {name:"CS9. Tom Sapp with Chicken", price:"$13.00"},
+    {name:"CS10. Rod Dee Tom Yum Goong Seafood", price:"$21.00"},
   ],
   "🧊 Cold Drinks": [
-    {name:"D1. Mineral Water"},
-    {name:"D3. Thai Ice Milk Tea"},
-    {name:"D4. Thai Green Milk Tea"},
-    {name:"D5. Thai Ice Coffee"},
-    {name:"D6. Thai Lemongrass"},
-    {name:"D7. Coke Can"},
-    {name:"D7. Coke Zero"},
-    {name:"D7. Sprite Can"},
-    {name:"D7. Green Tea Can"},
-    {name:"D7. Oolong Tea Can"},
-    {name:"D7. A&W Can"},
-    {name:"D11. Mango Smoothie"},
-    {name:"D12. Fresh Coconut"},
-    {name:"D13. Iced Thai Lemon Tea"},
+    {name:"D1. Mineral Water", price:"$2.00"},
+    {name:"D3. Thai Ice Milk Tea", price:"$3.80"},
+    {name:"D4. Thai Green Milk Tea", price:"$3.80"},
+    {name:"D5. Thai Ice Coffee", price:"$4.50"},
+    {name:"D6. Thai Lemongrass", price:"$3.80"},
+    {name:"D7. Coke Can", price:"$2.80"},
+    {name:"D7. Coke Zero", price:"$2.80"},
+    {name:"D7. Sprite Can", price:"$2.80"},
+    {name:"D7. Green Tea Can", price:"$2.80"},
+    {name:"D7. Oolong Tea Can", price:"$2.80"},
+    {name:"D7. A&W Can", price:"$2.80"},
+    {name:"D11. Mango Smoothie", price:"$7.00"},
+    {name:"D12. Fresh Coconut", price:"$6.90"},
+    {name:"D13. Iced Thai Lemon Tea", price:"$3.80"},
   ],
   "☕ Hot Drinks": [
-    {name:"D14. Hot Green Tea (Sachet)"},
-    {name:"D15. Hot Thai Milk Tea"},
-    {name:"D16. Hot Thai Green Milk Tea"},
-    {name:"D17. Hot Thai Lemongrass"},
-    {name:"D18. Hot Thai Coffee"},
+    {name:"D14. Hot Green Tea (Sachet)", price:"$2.30"},
+    {name:"D15. Hot Thai Milk Tea", price:"$3.00"},
+    {name:"D16. Hot Thai Green Milk Tea", price:"$3.00"},
+    {name:"D17. Hot Thai Lemongrass", price:"$3.00"},
+    {name:"D18. Hot Thai Coffee", price:"$3.80"},
   ],
   "🍨 Desserts": [
-    {name:"DM2. Red Ruby"},
-    {name:"DM6. Thai Cendol"},
-    {name:"DM7. Durian Cendol"},
-    {name:"DM1. Mango Sticky Rice"},
+    {name:"DM1. Mango Sticky Rice", price:"$8.00"},
+    {name:"DM2. Red Ruby", price:"$8.00"},
+    {name:"DM6. Thai Cendol", price:"$7.50"},
+    {name:"DM7. Durian Cendol", price:"$9.90"},
   ],
 };
+// Build price lookup from MENU
+const PRICE_MAP = {};
+Object.values(MENU).forEach(items => items.forEach(i => { PRICE_MAP[i.name] = i.price || ""; }));
 
 const FOOD_CATS = ["⭐ Popular","🥗 Starter","🌱 Vegetarian","🥗 Salad Corner","🍚 Rice","🍜 Noodles","🥣 Boat Noodle","🥦 Vegetables","🥚 Omelette & Tofu","🥩 Beef","🐷 Pork","🍗 Chicken","🦐 Seafood","🐟 Fish","🍛 Curry & Soup"];
 const DRINK_CATS = ["🧊 Cold Drinks","☕ Hot Drinks"];
@@ -243,7 +245,7 @@ function App() {
     if(!eid.trim()){alert("Please enter your EID!");return;}
     if(selected.size===0){alert("Please select at least one item!");return;}
     setLoading(true);
-    const ts=new Date().toLocaleString("en-SG",{timeZone:"Asia/Singapore",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+    const ts=new Date().toLocaleString("en-SG",{timeZone:"Asia/Singapore",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",hour12:false})+" (GMT+8)";
     const newOrder={eid:eid.trim().toUpperCase(),items:[...selected],timestamp:ts};
     await saveOrderToSheet(newOrder);
     const current=await loadOrdersFromStorage();
@@ -459,6 +461,24 @@ function App() {
         ):adminTab==="individual"?(
           <div>
             <div style={{fontSize:13,color:"#7A746C",marginBottom:12}}>{orders.length} order(s) received</div>
+            {/* Grand Total Banner */}
+            {(()=>{
+              const grandTotal = orders.reduce((sum,order)=>{
+                return sum + order.items.reduce((s,item)=>{
+                  const p = PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
+                  return s+p;
+                },0);
+              },0);
+              return grandTotal>0?(
+                <div style={{background:"#1C1C1A",color:"#fff",borderRadius:12,padding:16,marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div>
+                    <div style={{fontSize:11,opacity:0.6,textTransform:"uppercase",letterSpacing:1,fontWeight:600,marginBottom:4}}>Estimated Total ({orders.length} pax)</div>
+                    <div style={{fontSize:13,opacity:0.75}}>Based on individual orders</div>
+                  </div>
+                  <div style={{fontSize:26,fontWeight:800,color:"#D4A843"}}>${grandTotal.toFixed(2)}</div>
+                </div>
+              ):null;
+            })()}
             {orders.map((order,i)=>(
               <div key={i} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:12,border:"1px solid #E8E3DC"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
@@ -469,8 +489,24 @@ function App() {
                   <span style={{background:"#E8F4ED",color:"#2E7D5A",borderRadius:20,padding:"4px 10px",fontSize:12,fontWeight:600}}>{order.items.length} items</span>
                 </div>
                 {order.items.map(item=>(
-                  <div key={item} style={{fontSize:13,padding:"6px 0",borderBottom:"1px solid #F0ECE7"}}>• {item}</div>
+                  <div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"6px 0",borderBottom:"1px solid #F0ECE7"}}>
+                    <span>• {item}</span>
+                    {PRICE_MAP[item]&&<span style={{color:"#D4A843",fontWeight:600,flexShrink:0,marginLeft:8}}>{PRICE_MAP[item]}</span>}
+                  </div>
                 ))}
+                {/* Per-person subtotal */}
+                {(()=>{
+                  const total = order.items.reduce((sum,item)=>{
+                    const p = PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
+                    return sum+p;
+                  },0);
+                  return total>0?(
+                    <div style={{display:"flex",justifyContent:"space-between",marginTop:10,paddingTop:8,borderTop:"2px solid #E8E3DC"}}>
+                      <span style={{fontWeight:700,fontSize:14,color:"#1C1C1A"}}>Subtotal</span>
+                      <span style={{fontWeight:800,fontSize:15,color:"#C0392B"}}>${total.toFixed(2)}</span>
+                    </div>
+                  ):null;
+                })()}
               </div>
             ))}
           </div>
@@ -486,7 +522,10 @@ function App() {
               :sortedSummary.map(([item,eids])=>(
                 <div key={item} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:10,border:"1px solid #E8E3DC"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-                    <div style={{fontWeight:600,fontSize:14,flex:1,paddingRight:12}}>{item}</div>
+                    <div style={{flex:1,paddingRight:12}}>
+                      <div style={{fontWeight:600,fontSize:14}}>{item}</div>
+                      {PRICE_MAP[item]&&<div style={{fontSize:12,color:"#D4A843",fontWeight:600,marginTop:2}}>{PRICE_MAP[item]} each</div>}
+                    </div>
                     <span style={{background:"#C0392B",color:"#fff",borderRadius:20,padding:"3px 10px",fontSize:13,fontWeight:700,flexShrink:0}}>{eids.length} order{eids.length>1?"s":""}</span>
                   </div>
                   <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
@@ -501,7 +540,6 @@ function App() {
 
       <div style={{padding:"12px 16px 0",display:"flex",gap:10}}>
         <button onClick={()=>{setView("order");setAdminPw("");}} style={{flex:1,background:"#E8E3DC",color:"#1C1C1A",border:"none",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>← Back to Form</button>
-        <button onClick={clearOrders} style={{flex:1,background:"#fff",color:"#C0392B",border:"2px solid #C0392B",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🗑 Clear All</button>
       </div>
     </div>
   );
