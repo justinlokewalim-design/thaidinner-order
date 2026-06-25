@@ -194,7 +194,6 @@ const MENU = {
     {name:"D7. Oolong Tea Can", price:"$2.80"},
     {name:"D7. A&W Can", price:"$2.80"},
     {name:"D11. Mango Smoothie", price:"$7.00"},
-    {name:"D12. Fresh Coconut", price:"$6.90"},
     {name:"D13. Iced Thai Lemon Tea", price:"$3.80"},
   ],
   "☕ Hot Drinks": [
@@ -249,8 +248,12 @@ function App() {
     const newOrder={eid:eid.trim().toUpperCase(),items:[...selected],timestamp:ts};
     await saveOrderToSheet(newOrder);
     const current=await loadOrdersFromStorage();
-    const idx=current.findIndex(o=>o.eid===newOrder.eid);
-    if(idx>=0) current[idx]=newOrder; else current.push(newOrder);
+    const idx=current.findIndex(o=>o.eid.toUpperCase()===newOrder.eid.toUpperCase());
+    if(idx>=0) {
+      // Merge items, keep unique
+      const combined=[...new Set([...current[idx].items,...newOrder.items])];
+      current[idx]={...newOrder, items:combined};
+    } else current.push(newOrder);
     await saveOrdersToStorage(current);
     setOrders(current);
     setSubmittedEid(newOrder.eid);
@@ -265,14 +268,25 @@ function App() {
       const res = await fetch(SCRIPT_URL + "?t=" + Date.now());
       const data = await res.json();
       if(data.result === "success" && data.orders) {
-        // Merge sheet orders with local orders (sheet is source of truth)
         const sheetOrders = data.orders.filter(o => o.eid && o.items && o.items.length > 0);
-        await saveOrdersToStorage(sheetOrders);
-        setOrders(sheetOrders);
-        return sheetOrders;
+        // Merge duplicate EIDs — keep latest timestamp, combine unique items
+        const merged = {};
+        sheetOrders.forEach(order => {
+          const key = order.eid.toUpperCase().trim();
+          if(!merged[key]) {
+            merged[key] = {...order, eid: key};
+          } else {
+            // Combine items, remove duplicates
+            const combined = [...new Set([...merged[key].items, ...order.items])];
+            merged[key] = {...merged[key], items: combined, timestamp: order.timestamp};
+          }
+        });
+        const mergedOrders = Object.values(merged);
+        await saveOrdersToStorage(mergedOrders);
+        setOrders(mergedOrders);
+        return mergedOrders;
       }
     } catch(e) {
-      // Fall back to localStorage if fetch fails
       const local = await loadOrdersFromStorage();
       setOrders(local);
     }
