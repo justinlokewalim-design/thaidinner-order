@@ -11,69 +11,212 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; background: #FAFAF8; }
   input:focus { outline: 2px solid #C0392B; border-color: #C0392B !important; }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
 </style>
 </head>
 <body>
 <div id="root"></div>
-
 <script type="text/babel">
 const { useState, useEffect } = React;
-
 const ADMIN_PASSWORD = "MAS2024";
-
-// Persistent storage using JSONBin.io (free, no account needed for reading)
-// We use localStorage as fallback + a shared key approach
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0rm34D2LIiXMSFenudgwbfEgCWIbQfPcfsaxUUfNZAY0lTFPJI1UlquQkEop6gYn-/exec";
-const STORAGE_KEY = "rod_dee_mas_dinner_orders_v1";
+const STORAGE_KEY = "rod_dee_mas_dinner_v2";
 
-// Save order to Google Sheets
 async function saveOrderToSheet(order) {
-  await fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(order)
-  });
-}
-
-// Local cache so admin can see orders in same browser session
-async function loadOrdersFromStorage() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch(e) { return []; }
+    await fetch(SCRIPT_URL, { method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify(order) });
+  } catch(e) {}
 }
-
-async function saveOrdersToStorage(orders) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+async function loadOrdersFromStorage() {
+  try { const r=localStorage.getItem(STORAGE_KEY); return r?JSON.parse(r):[]; } catch(e){return[];}
 }
+async function saveOrdersToStorage(o) { localStorage.setItem(STORAGE_KEY,JSON.stringify(o)); }
 
+// FULL MENU with images where available
 const MENU = {
-  "⭐ Popular": ["N6. Phat Thai","CS6. Green Curry with Chicken","N11. Beef Boat Noodle Soup","R4. Thai Basil with Rice","N13. Pork Boat Noodle Soup","R7. Thai Fried Rice with Crab Meat"],
-  "🥗 Starters": ["S1. Crispy Prawn Cake","S2. Thai Fish Cake","S3. Pork Skewer Moo Ping","S4. Spring Roll","S5. Crispy Mid Joint Wing","S6. Boneless Stuffed Chicken","S7. Pandan Chicken","S9. Sticky Rice","S10. French Fries","S11. Rod Dee Combo A (2-3pax)","S12. Rod Dee Combo B (3-4pax)","S15. Fried Fish Wanton"],
-  "🥗 Salads": ["SC1. Mango Salad","SC2. Papaya Salad","SC3. Tofu Mango Salad","SC4. Grill Pork Salad","SC5. Minced Pork Salad","SC6. Yum Woon Sen"],
-  "🍚 Rice": ["R1. Tom Yum Fried Rice","R2. Pineapple Fried Rice","R3. Olive Fried Rice","R4. Thai Basil with Rice","R5. Sweet & Sour with Rice","R6. Black Pepper with Rice","R7. Thai Fried Rice with Crab Meat","R8. Scramble Egg with Thai Suki Sauce Prawn Rice","R11. Thai Fried Rice","R9. Fragrance White Rice","R10. Fried Egg"],
-  "🍜 Noodles": ["N1. Thai Style Fried Keow Teow","N2. Thai Style Fried Tang Hoon","N3. Thai Stir Fried Mama Noodle","N4. Thai Hor Fun (Soup)","N5. Tom Yum Noodle","N6. Phat Thai","N7. Seafood TomYum MAMA Noodles"],
-  "🥣 Boat Noodle": ["N11. Beef Boat Noodle Soup","N12. Beef Boat Noodle Dry","N13. Pork Boat Noodle Soup","N14. Pork Boat Noodle Dry"],
-  "🥦 Vegetables": ["V1. Stir Fried Mixed Vegetables with Oyster Sauce","V2. Stir Fried Thai Style Kang Kong","V3. Stir Fried Kai Lan with Oyster Sauce","V4. Long Bean with Thai Chilli Paste","V5. Bean Sprout with Garlic","V6. Roasted Pork Kai Lan"],
-  "🥚 Omelette & Tofu": ["OT1. Plain Omelette","OT2. Minced Pork Omelette","OT3. Prawn Omelette","OT4. Crab Meat Omelette","OT5. Deep Fried Tofu with Minced Pork","OT6. Deep Fried Tofu with Sweet & Sour Sauce","OT7. Scramble Egg with Thai Suki Sauce","OT8. Kampong Style Omelette with Onion"],
-  "🥩 Beef": ["B1. Basil Slice Beef","B2. Black Pepper Slice Beef","B3. Slice Beef with Oyster Sauce"],
-  "🐷 Pork": ["P1. Basil Minced Pork","P2. Black Pepper Slice Pork","P3. Slice Pork with Oyster Sauce","P4. Sweet & Sour Pork","P5. Fried Pork Slice with Thai Chilli Paste","P6. Deep Fried Pork Slice with Garlic","P7. Grilled Pork Collar"],
-  "🍗 Chicken": ["C1. Basil Minced Chicken","C2. Black Pepper Chicken","C3. Sweet & Sour Chicken","C4. Cashew Nut Chicken","C5. Chicken Tossed with Thai Chilli Paste"],
-  "🦐 Seafood": ["SF1. Basil Seafood","SF2. Deep Fried Prawn with Sweet & Sour Sauce","SF3. Deep Fried Prawn with Garlic","SF4. Stir Fried Prawn with Thai Chili Paste","SF5. Lala with Thai Chilli Paste","SF6. Claypot Glass Noodle with Prawn","SF7. Stir Fried Squid with Thai Chilli Paste","SF8. Steam Sotong with Thai Green Lime","S10. Steam Prawn with Thai Green Lime"],
-  "🐟 Fish": ["F1. Slice Fish with Sweet & Sour Sauce","F2. Slice Fish with Black Pepper Sauce","F3. Deep Fried Seabass with Mango Salad","F4. Deep Fried Seabass with Thai 3 Taste Sauce","F5. Steam Seabass with Lemon Garlic","F6. Deep Fried Seabass with Soya Sauce"],
-  "🍛 Curry & Soup": ["CS1. Tom Yum Clear Soup with Chicken","CS2. Tom Yum Clear Soup with Seafood","CS3. Red Tom Yum Soup with Chicken","CS4. Red Tom Yum Soup with Seafood","CS5. Tom Ka Gai (Chicken Only)","CS6. Green Curry with Chicken","CS7. Green Curry with Seafood","CS8. Thai Tofu and Pork Soup","CS9. Tom Sapp with Chicken","CS10. Rod Dee Tom Yum Goong Seafood"],
-  "🌱 Vegetarian": ["Pineapple Fried Rice (Veg)","Olive Fried Rice (Veg)","Thai Stir Fried Mama Noodle (Veg)","Thai Hor Fun (Veg)","Phat Thai (Veg)","Thai Style Fried Kweo Teow (Veg)","Plain Omelette (Veg)","Green Curry (Veg)","Stir Fried Kai Lan with Oyster Sauce (Veg)","Deep Fried Tofu with Sweet and Sour Sauce (Veg)","Mango Salad (Veg)","Papaya Salad (Veg)","Stir Fried Long Bean with Thai Chilli Paste (Veg)","Stir Fried Bean Sprout with Garlic (Veg)","Sticky Rice (Veg)","French Fries (Veg)"],
-  "🧊 Cold Drinks": ["D1. Mineral Water","D3. Thai Ice Milk Tea","D4. Thai Green Milk Tea","D5. Thai Ice Coffee","D6. Thai Lemongrass","D13. Iced Thai Lemon Tea","D7. Coke Can","D7. Coke Zero","D7. Sprite Can","D7. Green Tea Can","D7. Oolong Tea Can","D7. A&W Can","D11. Mango Smoothie","D12. Fresh Coconut"],
-  "☕ Hot Drinks": ["D14. Hot Green Tea (Sachet)","D15. Hot Thai Milk Tea","D16. Hot Thai Green Milk Tea","D17. Hot Thai Lemongrass","D18. Hot Thai Coffee"],
-  "🍨 Desserts": ["DM2. Red Ruby","DM6. Thai Cendol","DM7. Durian Cendol"]
+  "⭐ Popular": [
+    {name:"N6. Phat Thai"},
+    {name:"CS6. Green Curry with Chicken"},
+    {name:"N11. Beef Boat Noodle Soup"},
+    {name:"R4. Thai Basil with Rice"},
+    {name:"N13. Pork Boat Noodle Soup"},
+    {name:"R7. Thai Fried Rice with Crab Meat"},
+    {name:"DM1. Mango Sticky Rice"},
+  ],
+  "🥗 Starter": [
+    {name:"S1. Crispy Prawn Cake"},
+    {name:"S2. Thai Fish Cake"},
+    {name:"S3. Pork Skewer Moo Ping"},
+    {name:"S4. Spring Roll"},
+    {name:"S5. Crispy Mid Joint Wing"},
+    {name:"S6. Boneless Stuffed Chicken"},
+    {name:"S7. Pandan Chicken"},
+    {name:"S9. Sticky Rice"},
+    {name:"S10. French Fries"},
+    {name:"S11. Rod Dee Combo A (2-3pax)"},
+    {name:"S12. Rod Dee Combo B (3-4pax)"},
+    {name:"S15. Fried Fish Wanton"},
+  ],
+  "🌱 Vegetarian": [
+    {name:"Pineapple Fried Rice (Veg)"},
+    {name:"Olive Fried Rice (Veg)"},
+    {name:"Thai Stir Fried Mama Noodle (Veg)"},
+    {name:"Thai Hor Fun (Veg)"},
+    {name:"Phat Thai (Veg)"},
+    {name:"Thai Style Fried Kweo Teow (Veg)"},
+    {name:"Plain Omelette (Veg)"},
+    {name:"Green Curry (Veg)"},
+    {name:"Stir Fried Kai Lan with Oyster Sauce (Veg)"},
+    {name:"Spring Rolls (Veg)"},
+    {name:"Mango Salad (Veg)"},
+    {name:"Papaya Salad (Veg)"},
+    {name:"Stir Fried Long Bean with Thai Chilli Paste (Veg)"},
+    {name:"Stir Fried Bean Sprout with Garlic (Veg)"},
+    {name:"Sticky Rice (Veg)"},
+    {name:"French Fries (Veg)"},
+    {name:"Deep Fried Tofu with Sweet and Sour Sauce (Veg)"},
+  ],
+
+  "🥗 Salad Corner": [
+    {name:"SC1. Mango Salad"},
+    {name:"SC2. Papaya Salad"},
+    {name:"SC3. Tofu Mango Salad"},
+    {name:"SC4. Grill Pork Salad"},
+    {name:"SC5. Minced Pork Salad"},
+    {name:"SC6. Yum Woon Sen"},
+  ],
+  "🍚 Rice": [
+    {name:"R1. Tom Yum Fried Rice"},
+    {name:"R2. Pineapple Fried Rice"},
+    {name:"R3. Olive Fried Rice"},
+    {name:"R4. Thai Basil with Rice"},
+    {name:"R5. Sweet & Sour with Rice"},
+    {name:"R6. Black Pepper with Rice"},
+    {name:"R7. Thai Fried Rice with Crab Meat"},
+    {name:"R8. Scramble Egg with Thai Suki Sauce Prawn Rice"},
+    {name:"R11. Thai Fried Rice"},
+    {name:"R9. Fragrance White Rice"},
+    {name:"R10. Fried Egg"},
+  ],
+  "🍜 Noodles": [
+    {name:"N1. Thai Style Fried Keow Teow"},
+    {name:"N2. Thai Style Fried Tang Hoon"},
+    {name:"N3. Thai Stir Fried Mama Noodle"},
+    {name:"N4. Thai Hor Fun (Soup)"},
+    {name:"N5. Tom Yum Noodle"},
+    {name:"N6. Phat Thai"},
+    {name:"N7. Seafood TomYum MAMA Noodles"},
+  ],
+  "🥣 Boat Noodle": [
+    {name:"N11. Beef Boat Noodle Soup"},
+    {name:"N12. Beef Boat Noodle Dry"},
+    {name:"N13. Pork Boat Noodle Soup"},
+    {name:"N14. Pork Boat Noodle Dry"},
+  ],
+  "🥦 Vegetables": [
+    {name:"V1. Stir Fried Mixed Vegetables with Oyster Sauce"},
+    {name:"V2. Stir Fried Thai Style Kang Kong"},
+    {name:"V3. Stir Fried Kai Lan with Oyster Sauce"},
+    {name:"V4. Long Bean with Thai Chilli Paste"},
+    {name:"V5. Bean Sprout with Garlic"},
+    {name:"V6. Roasted Pork Kai Lan"},
+  ],
+  "🥚 Omelette & Tofu": [
+    {name:"OT1. Plain Omelette"},
+    {name:"OT2. Minced Pork Omelette"},
+    {name:"OT3. Prawn Omelette"},
+    {name:"OT4. Crab Meat Omelette"},
+    {name:"OT5. Deep Fried Tofu with Minced Pork"},
+    {name:"OT6. Deep Fried Tofu with Sweet & Sour Sauce"},
+    {name:"OT7. Scramble Egg with Thai Suki Sauce"},
+    {name:"OT8. Kampong Style Omelette with Onion"},
+  ],
+  "🥩 Beef": [
+    {name:"B1. Basil Slice Beef"},
+    {name:"B2. Black Pepper Slice Beef"},
+    {name:"B3. Slice Beef with Oyster Sauce"},
+  ],
+  "🐷 Pork": [
+    {name:"P1. Basil Minced Pork"},
+    {name:"P2. Black Pepper Slice Pork"},
+    {name:"P3. Slice Pork with Oyster Sauce"},
+    {name:"P4. Sweet & Sour Pork"},
+    {name:"P5. Fried Pork Slice with Thai Chilli Paste"},
+    {name:"P6. Deep Fried Pork Slice with Garlic"},
+    {name:"P7. Grilled Pork Collar"},
+  ],
+  "🍗 Chicken": [
+    {name:"C1. Basil Minced Chicken"},
+    {name:"C2. Black Pepper Chicken"},
+    {name:"C3. Sweet & Sour Chicken"},
+    {name:"C4. Cashew Nut Chicken"},
+    {name:"C5. Chicken Tossed with Thai Chilli Paste"},
+  ],
+  "🦐 Seafood": [
+    {name:"SF1. Basil Seafood"},
+    {name:"SF2. Deep Fried Prawn with Sweet & Sour Sauce"},
+    {name:"SF3. Deep Fried Prawn with Garlic"},
+    {name:"SF4. Stir Fried Prawn with Thai Chili Paste"},
+    {name:"SF5. Lala with Thai Chilli Paste"},
+    {name:"SF6. Claypot Glass Noodle with Prawn"},
+    {name:"SF7. Stir Fried Squid with Thai Chilli Paste"},
+    {name:"SF8. Steam Sotong with Thai Green Lime"},
+    {name:"S10. Steam Prawn with Thai Green Lime"},
+  ],
+  "🐟 Fish": [
+    {name:"F1. Slice Fish with Sweet & Sour Sauce"},
+    {name:"F2. Slice Fish with Black Pepper Sauce"},
+    {name:"F3. Deep Fried Seabass with Mango Salad"},
+    {name:"F4. Deep Fried Seabass with Thai 3 Taste Sauce"},
+    {name:"F5. Steam Seabass with Lemon Garlic"},
+    {name:"F6. Deep Fried Seabass with Soya Sauce"},
+  ],
+  "🍛 Curry & Soup": [
+    {name:"CS1. Tom Yum Clear Soup with Chicken"},
+    {name:"CS2. Tom Yum Clear Soup with Seafood"},
+    {name:"CS3. Red Tom Yum Soup with Chicken"},
+    {name:"CS4. Red Tom Yum Soup with Seafood"},
+    {name:"CS5. Tom Ka Gai (Chicken Only)"},
+    {name:"CS6. Green Curry with Chicken"},
+    {name:"CS7. Green Curry with Seafood"},
+    {name:"CS8. Thai Tofu and Pork Soup"},
+    {name:"CS9. Tom Sapp with Chicken"},
+    {name:"CS10. Rod Dee Tom Yum Goong Seafood"},
+  ],
+  "🧊 Cold Drinks": [
+    {name:"D1. Mineral Water"},
+    {name:"D3. Thai Ice Milk Tea"},
+    {name:"D4. Thai Green Milk Tea"},
+    {name:"D5. Thai Ice Coffee"},
+    {name:"D6. Thai Lemongrass"},
+    {name:"D7. Coke Can"},
+    {name:"D7. Coke Zero"},
+    {name:"D7. Sprite Can"},
+    {name:"D7. Green Tea Can"},
+    {name:"D7. Oolong Tea Can"},
+    {name:"D7. A&W Can"},
+    {name:"D11. Mango Smoothie"},
+    {name:"D12. Fresh Coconut"},
+    {name:"D13. Iced Thai Lemon Tea"},
+  ],
+  "☕ Hot Drinks": [
+    {name:"D14. Hot Green Tea (Sachet)"},
+    {name:"D15. Hot Thai Milk Tea"},
+    {name:"D16. Hot Thai Green Milk Tea"},
+    {name:"D17. Hot Thai Lemongrass"},
+    {name:"D18. Hot Thai Coffee"},
+  ],
+  "🍨 Desserts": [
+    {name:"DM2. Red Ruby"},
+    {name:"DM6. Thai Cendol"},
+    {name:"DM7. Durian Cendol"},
+    {name:"DM1. Mango Sticky Rice"},
+  ],
 };
 
-const FOOD_CATS = ["⭐ Popular","🥗 Starters","🥗 Salads","🍚 Rice","🍜 Noodles","🥣 Boat Noodle","🥦 Vegetables","🥚 Omelette & Tofu","🥩 Beef","🐷 Pork","🍗 Chicken","🦐 Seafood","🐟 Fish","🍛 Curry & Soup","🌱 Vegetarian"];
+const FOOD_CATS = ["⭐ Popular","🥗 Starter","🌱 Vegetarian","🥗 Salad Corner","🍚 Rice","🍜 Noodles","🥣 Boat Noodle","🥦 Vegetables","🥚 Omelette & Tofu","🥩 Beef","🐷 Pork","🍗 Chicken","🦐 Seafood","🐟 Fish","🍛 Curry & Soup"];
 const DRINK_CATS = ["🧊 Cold Drinks","☕ Hot Drinks"];
 const DESSERT_CATS = ["🍨 Desserts"];
+const ALL_CATS = [...FOOD_CATS, ...DRINK_CATS, ...DESSERT_CATS];
 
 function App() {
   const [view, setView] = useState("order");
@@ -86,27 +229,26 @@ function App() {
   const [adminTab, setAdminTab] = useState("summary");
   const [summaryFilter, setSummaryFilter] = useState("all");
   const [loading, setLoading] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
   const [submittedEid, setSubmittedEid] = useState("");
   const [submittedItems, setSubmittedItems] = useState([]);
 
-  useEffect(() => { loadOrdersFromStorage().then(setOrders); }, []);
+  useEffect(()=>{ loadOrdersFromStorage().then(setOrders); },[]);
 
   function toggle(item) {
-    setSelected(prev => { const n = new Set(prev); n.has(item) ? n.delete(item) : n.add(item); return n; });
+    setSelected(prev=>{ const n=new Set(prev); n.has(item)?n.delete(item):n.add(item); return n; });
   }
 
   async function submitOrder() {
-    if (!eid.trim()) { alert("Please enter your EID!"); return; }
-    if (selected.size === 0) { alert("Please select at least one item!"); return; }
+    if(!eid.trim()){alert("Please enter your EID!");return;}
+    if(selected.size===0){alert("Please select at least one item!");return;}
     setLoading(true);
-    const ts = new Date().toLocaleString("en-SG", { timeZone: "Asia/Singapore", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit" });
-    const newOrder = { eid: eid.trim().toUpperCase(), items: [...selected], timestamp: ts };
-    // Send to Google Sheets
+    const ts=new Date().toLocaleString("en-SG",{timeZone:"Asia/Singapore",day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});
+    const newOrder={eid:eid.trim().toUpperCase(),items:[...selected],timestamp:ts};
     await saveOrderToSheet(newOrder);
-    // Also cache locally
-    const current = await loadOrdersFromStorage();
-    const idx = current.findIndex(o => o.eid === newOrder.eid);
-    if (idx >= 0) current[idx] = newOrder; else current.push(newOrder);
+    const current=await loadOrdersFromStorage();
+    const idx=current.findIndex(o=>o.eid===newOrder.eid);
+    if(idx>=0) current[idx]=newOrder; else current.push(newOrder);
     await saveOrdersToStorage(current);
     setOrders(current);
     setSubmittedEid(newOrder.eid);
@@ -116,49 +258,66 @@ function App() {
     setView("done");
   }
 
+  async function fetchOrdersFromSheet() {
+    try {
+      const res = await fetch(SCRIPT_URL + "?t=" + Date.now());
+      const data = await res.json();
+      if(data.result === "success" && data.orders) {
+        // Merge sheet orders with local orders (sheet is source of truth)
+        const sheetOrders = data.orders.filter(o => o.eid && o.items && o.items.length > 0);
+        await saveOrdersToStorage(sheetOrders);
+        setOrders(sheetOrders);
+        return sheetOrders;
+      }
+    } catch(e) {
+      // Fall back to localStorage if fetch fails
+      const local = await loadOrdersFromStorage();
+      setOrders(local);
+    }
+  }
+
   function adminLogin() {
-    if (adminPw === ADMIN_PASSWORD) {
-      setAdminError(""); setView("admin");
-      loadOrdersFromStorage().then(setOrders);
-    } else { setAdminError("Wrong password. Try again."); }
+    if(adminPw===ADMIN_PASSWORD){
+      setAdminError("");
+      setView("admin");
+      setAdminLoading(true);
+      fetchOrdersFromSheet().finally(()=>setAdminLoading(false));
+    }
+    else setAdminError("Wrong password. Try again.");
   }
 
   async function clearOrders() {
-    if (!window.confirm("Clear ALL orders? This cannot be undone.")) return;
+    if(!window.confirm("Clear ALL orders? This cannot be undone."))return;
     await saveOrdersToStorage([]);
     setOrders([]);
   }
 
+  async function refreshOrders() {
+    setAdminLoading(true);
+    await fetchOrdersFromSheet();
+    setAdminLoading(false);
+  }
+
   function buildSummary() {
-    const s = {};
-    orders.forEach(o => o.items.forEach(item => { if(!s[item]) s[item]=[]; s[item].push(o.eid); }));
+    const s={};
+    orders.forEach(o=>o.items.forEach(item=>{if(!s[item])s[item]=[];s[item].push(o.eid);}));
     return s;
   }
-
-  const summary = buildSummary();
+  const summary=buildSummary();
 
   function getFilteredSummary() {
-    if (summaryFilter === "all") return summary;
-    const cats = summaryFilter === "food" ? FOOD_CATS : summaryFilter === "drinks" ? DRINK_CATS : DESSERT_CATS;
-    const items = cats.flatMap(c => MENU[c] || []);
-    return Object.fromEntries(Object.entries(summary).filter(([k]) => items.includes(k)));
+    if(summaryFilter==="all") return summary;
+    const cats=summaryFilter==="food"?FOOD_CATS:summaryFilter==="drinks"?DRINK_CATS:DESSERT_CATS;
+    const items=cats.flatMap(c=>(MENU[c]||[]).map(i=>i.name));
+    return Object.fromEntries(Object.entries(summary).filter(([k])=>items.includes(k)));
   }
-
-  const sortedSummary = Object.entries(getFilteredSummary()).sort((a,b) => b[1].length - a[1].length);
-  const tabCats = tab === "food" ? FOOD_CATS : tab === "drinks" ? DRINK_CATS : DESSERT_CATS;
-
-  const S = { // styles shorthand
-    page: { fontFamily:"-apple-system,BlinkMacSystemFont,'Inter',sans-serif", background:"#FAFAF8", minHeight:"100vh", paddingBottom:80 },
-    header: { background:"#C0392B", color:"#fff", padding:"24px 20px 20px", textAlign:"center" },
-    card: { background:"#fff", borderRadius:12, padding:16, marginBottom:12, border:"1px solid #E8E3DC" },
-    btn: (bg,color,full) => ({ display:full?"block":"inline-block", width:full?"100%":"auto", background:bg, color:color, border:"none", borderRadius:10, padding:"13px 20px", fontSize:14, fontWeight:600, cursor:"pointer", fontFamily:"inherit", marginBottom:8 }),
-    tag: (bg,color) => ({ background:bg, color:color, borderRadius:20, padding:"3px 10px", fontSize:12, fontWeight:600 }),
-  };
+  const sortedSummary=Object.entries(getFilteredSummary()).sort((a,b)=>b[1].length-a[1].length);
+  const tabCats=tab==="food"?FOOD_CATS:tab==="drinks"?DRINK_CATS:DESSERT_CATS;
 
   // ORDER FORM
-  if (view === "order") return (
-    <div style={S.page}>
-      <div style={S.header}>
+  if(view==="order") return (
+    <div style={{fontFamily:"inherit",background:"#FAFAF8",minHeight:"100vh",paddingBottom:80}}>
+      <div style={{background:"#C0392B",color:"#fff",padding:"24px 20px 20px",textAlign:"center"}}>
         <div style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",opacity:0.75,marginBottom:6}}>MAS Account · Team Dinner Order</div>
         <div style={{fontSize:26,fontWeight:800,marginBottom:4}}>🌶 Rod Dee Thai Cafe</div>
         <div style={{fontSize:13,opacity:0.8}}>Teo Hong Road · Select what you'd like for dinner</div>
@@ -166,28 +325,36 @@ function App() {
 
       <div style={{background:"#fff",borderBottom:"1px solid #E8E3DC",padding:"16px 20px"}}>
         <div style={{fontSize:11,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",color:"#7A746C",marginBottom:8}}>Your EID</div>
-        <input value={eid} onChange={e=>setEid(e.target.value)} placeholder="e.g. E1234567"
-          style={{width:"100%",maxWidth:320,border:"1.5px solid #E8E3DC",borderRadius:8,padding:"10px 14px",fontSize:15,fontFamily:"inherit",background:"#FAFAF8"}} />
+        <input value={eid} onChange={e=>setEid(e.target.value)} placeholder="e.g. JAMES.HWA.JAAN.GAN"
+          style={{width:"100%",maxWidth:360,border:"1.5px solid #E8E3DC",borderRadius:8,padding:"10px 14px",fontSize:15,fontFamily:"inherit",background:"#FAFAF8"}}/>
       </div>
 
+      {/* Tabs */}
       <div style={{display:"flex",background:"#fff",borderBottom:"2px solid #E8E3DC",padding:"0 16px",overflowX:"auto",position:"sticky",top:0,zIndex:10}}>
         {[["food","🍜 Food"],["drinks","🧋 Drinks"],["dessert","🍨 Desserts"]].map(([k,l])=>(
           <button key={k} onClick={()=>setTab(k)} style={{padding:"13px 18px",fontSize:13,fontWeight:600,color:tab===k?"#C0392B":"#7A746C",background:"none",border:"none",borderBottom:tab===k?"2.5px solid #C0392B":"2.5px solid transparent",marginBottom:-2,cursor:"pointer",whiteSpace:"nowrap",fontFamily:"inherit"}}>{l}</button>
         ))}
       </div>
 
-      <div style={{padding:"0 16px"}}>
+      {/* Menu Items */}
+      <div style={{padding:"0 12px"}}>
         {tabCats.map(cat=>(
           <div key={cat}>
             <div style={{fontSize:11,fontWeight:700,letterSpacing:1.5,textTransform:"uppercase",color:"#D4A843",padding:"16px 4px 8px",borderTop:"1px solid #E8E3DC",marginTop:4}}>{cat}</div>
-            {MENU[cat].map(item=>{
-              const on=selected.has(item);
+            {(MENU[cat]||[]).map(item=>{
+              const on=selected.has(item.name);
               return (
-                <div key={item} onClick={()=>toggle(item)} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 6px",borderBottom:"1px solid #F0ECE7",cursor:"pointer",background:on?"#E8F4ED":"transparent",borderRadius:6,marginBottom:1}}>
-                  <div style={{width:20,height:20,border:on?"2px solid #2E7D5A":"2px solid #ddd",borderRadius:5,background:on?"#2E7D5A":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.15s"}}>
+                <div key={item.name} onClick={()=>toggle(item.name)}
+                  style={{display:"flex",alignItems:"center",gap:12,padding:"10px 4px",borderBottom:"1px solid #F0ECE7",cursor:"pointer",background:on?"#E8F4ED":"transparent",borderRadius:8,marginBottom:2,transition:"background 0.1s"}}>
+                  <div style={{width:20,height:20,border:on?"2px solid #2E7D5A":"2px solid #ddd",borderRadius:5,background:on?"#2E7D5A":"#fff",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                     {on&&<svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M1 4L4 7L10 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                   </div>
-                  <span style={{fontSize:14,fontWeight:500,color:"#1C1C1A",flex:1}}>{item}</span>
+                  <span style={{fontSize:14,fontWeight:500,color:"#1C1C1A",flex:1,lineHeight:1.3}}>{item.name}</span>
+                  {item.img && (
+                    <img src={item.img} alt={item.name}
+                      style={{width:56,height:56,objectFit:"cover",borderRadius:8,flexShrink:0,border:"1px solid #eee"}}
+                      onError={e=>{e.target.style.display="none";}}/>
+                  )}
                 </div>
               );
             })}
@@ -195,13 +362,14 @@ function App() {
         ))}
       </div>
 
+      {/* Bottom bar */}
       <div style={{position:"fixed",bottom:0,left:0,right:0,background:"#fff",borderTop:"1px solid #E8E3DC",padding:"12px 20px",display:"flex",alignItems:"center",gap:12,boxShadow:"0 -4px 20px rgba(0,0,0,0.06)",zIndex:20}}>
         <div style={{flex:1,fontSize:13,color:"#7A746C"}}><span style={{fontWeight:700,color:"#1C1C1A"}}>{selected.size}</span> items selected</div>
-        <button onClick={submitOrder} disabled={loading} style={{background:loading?"#aaa":"#C0392B",color:"#fff",border:"none",borderRadius:10,padding:"12px 24px",fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer",fontFamily:"inherit"}}>
+        <button onClick={submitOrder} disabled={loading}
+          style={{background:loading?"#aaa":"#C0392B",color:"#fff",border:"none",borderRadius:10,padding:"12px 24px",fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer",fontFamily:"inherit"}}>
           {loading?"Saving...":"Submit Order →"}
         </button>
       </div>
-
       <div style={{textAlign:"center",padding:"28px 0 8px"}}>
         <button onClick={()=>setView("adminLogin")} style={{fontSize:12,color:"#bbb",background:"none",border:"none",cursor:"pointer",textDecoration:"underline"}}>Admin View</button>
       </div>
@@ -209,29 +377,31 @@ function App() {
   );
 
   // DONE
-  if (view === "done") return (
+  if(view==="done") return (
     <div style={{fontFamily:"inherit",background:"#FAFAF8",minHeight:"100vh",padding:24}}>
       <div style={{background:"#2E7D5A",color:"#fff",borderRadius:16,padding:28,textAlign:"center",marginBottom:20}}>
         <div style={{fontSize:48,marginBottom:8}}>✅</div>
         <div style={{fontSize:22,fontWeight:800,marginBottom:6}}>Order Submitted!</div>
-        <div style={{fontSize:14,opacity:0.85}}>Your dinner order has been recorded. No further action needed!</div>
+        <div style={{fontSize:14,opacity:0.85}}>Your dinner order has been recorded successfully.</div>
       </div>
-      <div style={{...S.card,marginBottom:12}}>
-        <div style={{fontSize:12,color:"#7A746C",marginBottom:4,textTransform:"uppercase",letterSpacing:1,fontWeight:600}}>EID</div>
-        <div style={{fontSize:20,fontWeight:800,color:"#1C1C1A"}}>{submittedEid}</div>
+      <div style={{background:"#fff",borderRadius:12,padding:16,marginBottom:12,border:"1px solid #E8E3DC"}}>
+        <div style={{fontSize:11,color:"#7A746C",marginBottom:4,textTransform:"uppercase",letterSpacing:1,fontWeight:600}}>EID</div>
+        <div style={{fontSize:18,fontWeight:800}}>{submittedEid}</div>
       </div>
-      <div style={S.card}>
-        <div style={{fontSize:12,color:"#7A746C",marginBottom:12,textTransform:"uppercase",letterSpacing:1,fontWeight:600}}>Your selections ({submittedItems.length} items)</div>
+      <div style={{background:"#fff",borderRadius:12,padding:16,border:"1px solid #E8E3DC",marginBottom:20}}>
+        <div style={{fontSize:11,color:"#7A746C",marginBottom:12,textTransform:"uppercase",letterSpacing:1,fontWeight:600}}>Your selections ({submittedItems.length} items)</div>
         {submittedItems.map(item=>(
-          <div key={item} style={{fontSize:14,padding:"7px 0",borderBottom:"1px solid #F0ECE7",color:"#1C1C1A"}}>• {item}</div>
+          <div key={item} style={{fontSize:14,padding:"7px 0",borderBottom:"1px solid #F0ECE7"}}>• {item}</div>
         ))}
       </div>
-      <button onClick={()=>setView("order")} style={{...S.btn("#C0392B","#fff",true),marginTop:16}}>← Submit Another Order</button>
+      <button onClick={()=>setView("order")} style={{display:"block",width:"100%",background:"#C0392B",color:"#fff",border:"none",borderRadius:10,padding:14,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+        ← Submit Another Order
+      </button>
     </div>
   );
 
   // ADMIN LOGIN
-  if (view === "adminLogin") return (
+  if(view==="adminLogin") return (
     <div style={{fontFamily:"inherit",background:"#FAFAF8",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
       <div style={{background:"#fff",borderRadius:16,padding:32,width:"100%",maxWidth:360,border:"1px solid #E8E3DC",boxShadow:"0 4px 24px rgba(0,0,0,0.07)"}}>
         <div style={{textAlign:"center",marginBottom:24}}>
@@ -241,23 +411,26 @@ function App() {
         </div>
         <input type="password" placeholder="Enter admin password" value={adminPw}
           onChange={e=>setAdminPw(e.target.value)} onKeyDown={e=>e.key==="Enter"&&adminLogin()}
-          style={{width:"100%",border:"1.5px solid #E8E3DC",borderRadius:8,padding:"12px 14px",fontSize:15,fontFamily:"inherit",marginBottom:10,boxSizing:"border-box"}} />
+          style={{width:"100%",border:"1.5px solid #E8E3DC",borderRadius:8,padding:"12px 14px",fontSize:15,fontFamily:"inherit",marginBottom:10,boxSizing:"border-box"}}/>
         {adminError&&<div style={{color:"#C0392B",fontSize:13,marginBottom:10}}>{adminError}</div>}
-        <button onClick={adminLogin} style={{...S.btn("#C0392B","#fff",true)}}>Login →</button>
-        <button onClick={()=>setView("order")} style={{...S.btn("#F0EDE8","#555",true)}}>← Back to Order Form</button>
+        <button onClick={adminLogin} style={{display:"block",width:"100%",background:"#C0392B",color:"#fff",border:"none",borderRadius:10,padding:14,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginBottom:10}}>Login →</button>
+        <button onClick={()=>setView("order")} style={{display:"block",width:"100%",background:"#F0EDE8",color:"#555",border:"none",borderRadius:10,padding:12,fontSize:14,cursor:"pointer",fontFamily:"inherit"}}>← Back to Order Form</button>
       </div>
     </div>
   );
 
   // ADMIN DASHBOARD
-  if (view === "admin") return (
+  if(view==="admin") return (
     <div style={{fontFamily:"inherit",background:"#FAFAF8",minHeight:"100vh",paddingBottom:40}}>
       <div style={{background:"#1C1C1A",color:"#fff",padding:"20px 20px 16px"}}>
-        <div style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",opacity:0.4,marginBottom:4}}>Admin Dashboard</div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:"uppercase",opacity:0.4}}>Admin Dashboard</div>
+          <button onClick={refreshOrders} disabled={adminLoading} style={{background:"#333",color:"#fff",border:"none",borderRadius:8,padding:"6px 12px",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",opacity:adminLoading?0.5:1}}>{adminLoading?"Loading...":"🔄 Refresh"}</button>
+        </div>
         <div style={{fontSize:20,fontWeight:800,marginBottom:14}}>🌶 Rod Dee Dinner · MAS Account</div>
         <div style={{display:"flex",gap:10}}>
           {[["#2E7D5A",orders.length,"Orders"],["#C0392B",Object.values(summary).reduce((a,b)=>a+b.length,0),"Total Items"],["#D4A843",Object.keys(summary).length,"Unique Dishes"]].map(([bg,val,label])=>(
-            <div key={label} style={{background:bg,borderRadius:10,padding:"10px 16px",textAlign:"center",flex:1}}>
+            <div key={label} style={{background:bg,borderRadius:10,padding:"10px 0",textAlign:"center",flex:1}}>
               <div style={{fontSize:22,fontWeight:800}}>{val}</div>
               <div style={{fontSize:11,opacity:0.85}}>{label}</div>
             </div>
@@ -265,30 +438,35 @@ function App() {
         </div>
       </div>
 
-      <div style={{display:"flex",gap:0,borderBottom:"2px solid #E8E3DC",background:"#fff",padding:"0 16px"}}>
+      <div style={{display:"flex",borderBottom:"2px solid #E8E3DC",background:"#fff",padding:"0 16px"}}>
         {[["summary","📊 Summary"],["individual","👤 By Person"]].map(([k,l])=>(
           <button key={k} onClick={()=>setAdminTab(k)} style={{padding:"13px 18px",fontSize:13,fontWeight:600,color:adminTab===k?"#1C1C1A":"#7A746C",background:"none",border:"none",borderBottom:adminTab===k?"2.5px solid #1C1C1A":"2.5px solid transparent",marginBottom:-2,cursor:"pointer",fontFamily:"inherit"}}>{l}</button>
         ))}
       </div>
 
       <div style={{padding:"16px 16px 0"}}>
-        {orders.length === 0 ? (
+        {adminLoading?(
+          <div style={{textAlign:"center",padding:"48px 24px",color:"#7A746C"}}>
+            <div style={{fontSize:32,marginBottom:12}}>⏳</div>
+            <div style={{fontSize:15,fontWeight:600}}>Loading orders from Google Sheets...</div>
+          </div>
+        ):orders.length===0?(
           <div style={{textAlign:"center",padding:"48px 24px",color:"#7A746C"}}>
             <div style={{fontSize:40,marginBottom:12}}>📭</div>
             <div style={{fontSize:16,fontWeight:600}}>No orders yet</div>
             <div style={{fontSize:13,marginTop:4}}>Share the link with your team</div>
           </div>
-        ) : adminTab === "individual" ? (
+        ):adminTab==="individual"?(
           <div>
             <div style={{fontSize:13,color:"#7A746C",marginBottom:12}}>{orders.length} order(s) received</div>
             {orders.map((order,i)=>(
-              <div key={i} style={S.card}>
+              <div key={i} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:12,border:"1px solid #E8E3DC"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
                   <div>
                     <div style={{fontWeight:700,fontSize:16}}>{order.eid}</div>
                     <div style={{fontSize:11,color:"#7A746C",marginTop:2}}>{order.timestamp}</div>
                   </div>
-                  <span style={{...S.tag("#E8F4ED","#2E7D5A")}}>{order.items.length} items</span>
+                  <span style={{background:"#E8F4ED",color:"#2E7D5A",borderRadius:20,padding:"4px 10px",fontSize:12,fontWeight:600}}>{order.items.length} items</span>
                 </div>
                 {order.items.map(item=>(
                   <div key={item} style={{fontSize:13,padding:"6px 0",borderBottom:"1px solid #F0ECE7"}}>• {item}</div>
@@ -296,20 +474,20 @@ function App() {
               </div>
             ))}
           </div>
-        ) : (
+        ):(
           <div>
             <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
               {[["all","All"],["food","🍜 Food"],["drinks","🧋 Drinks"],["dessert","🍨 Desserts"]].map(([k,l])=>(
                 <button key={k} onClick={()=>setSummaryFilter(k)} style={{padding:"6px 14px",fontSize:12,fontWeight:600,borderRadius:20,border:"none",cursor:"pointer",fontFamily:"inherit",background:summaryFilter===k?"#1C1C1A":"#E8E3DC",color:summaryFilter===k?"#fff":"#1C1C1A"}}>{l}</button>
               ))}
             </div>
-            {sortedSummary.length === 0
-              ? <div style={{textAlign:"center",padding:32,color:"#7A746C",fontSize:14}}>No items in this category</div>
-              : sortedSummary.map(([item,eids])=>(
-                <div key={item} style={S.card}>
+            {sortedSummary.length===0
+              ?<div style={{textAlign:"center",padding:32,color:"#7A746C",fontSize:14}}>No items in this category</div>
+              :sortedSummary.map(([item,eids])=>(
+                <div key={item} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:10,border:"1px solid #E8E3DC"}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
                     <div style={{fontWeight:600,fontSize:14,flex:1,paddingRight:12}}>{item}</div>
-                    <span style={{...S.tag("#C0392B","#fff"),flexShrink:0}}>{eids.length} order{eids.length>1?"s":""}</span>
+                    <span style={{background:"#C0392B",color:"#fff",borderRadius:20,padding:"3px 10px",fontSize:13,fontWeight:700,flexShrink:0}}>{eids.length} order{eids.length>1?"s":""}</span>
                   </div>
                   <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                     {eids.map((e,i)=><span key={i} style={{background:"#F0F0F0",borderRadius:20,padding:"3px 10px",fontSize:12,color:"#444",fontWeight:500}}>{e}</span>)}
@@ -322,14 +500,14 @@ function App() {
       </div>
 
       <div style={{padding:"12px 16px 0",display:"flex",gap:10}}>
-        <button onClick={()=>{setView("order");setAdminPw("");}} style={{...S.btn("#E8E3DC","#1C1C1A",false),flex:1}}>← Back to Form</button>
+        <button onClick={()=>{setView("order");setAdminPw("");}} style={{flex:1,background:"#E8E3DC",color:"#1C1C1A",border:"none",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>← Back to Form</button>
         <button onClick={clearOrders} style={{flex:1,background:"#fff",color:"#C0392B",border:"2px solid #C0392B",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🗑 Clear All</button>
       </div>
     </div>
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
 </html>
