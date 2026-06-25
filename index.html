@@ -440,9 +440,10 @@ function App() {
         </div>
       </div>
 
-      <div style={{display:"flex",borderBottom:"2px solid #E8E3DC",background:"#fff",padding:"0 16px"}}>
-        {[["summary","📊 Summary"],["individual","👤 By Person"]].map(([k,l])=>(
-          <button key={k} onClick={()=>setAdminTab(k)} style={{padding:"13px 18px",fontSize:13,fontWeight:600,color:adminTab===k?"#1C1C1A":"#7A746C",background:"none",border:"none",borderBottom:adminTab===k?"2.5px solid #1C1C1A":"2.5px solid transparent",marginBottom:-2,cursor:"pointer",fontFamily:"inherit"}}>{l}</button>
+      {/* Admin Tabs */}
+      <div style={{display:"flex",borderBottom:"2px solid #E8E3DC",background:"#fff",padding:"0 16px",overflowX:"auto"}}>
+        {[["summary","📊 Summary"],["individual","👤 By Person"],["orderlist","📋 Order List"]].map(([k,l])=>(
+          <button key={k} onClick={()=>setAdminTab(k)} style={{padding:"13px 16px",fontSize:13,fontWeight:600,color:adminTab===k?"#1C1C1A":"#7A746C",background:"none",border:"none",borderBottom:adminTab===k?"2.5px solid #1C1C1A":"2.5px solid transparent",marginBottom:-2,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>{l}</button>
         ))}
       </div>
 
@@ -458,59 +459,8 @@ function App() {
             <div style={{fontSize:16,fontWeight:600}}>No orders yet</div>
             <div style={{fontSize:13,marginTop:4}}>Share the link with your team</div>
           </div>
-        ):adminTab==="individual"?(
-          <div>
-            <div style={{fontSize:13,color:"#7A746C",marginBottom:12}}>{orders.length} order(s) received</div>
-            {/* Grand Total Banner */}
-            {(()=>{
-              const grandTotal = orders.reduce((sum,order)=>{
-                return sum + order.items.reduce((s,item)=>{
-                  const p = PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
-                  return s+p;
-                },0);
-              },0);
-              return grandTotal>0?(
-                <div style={{background:"#1C1C1A",color:"#fff",borderRadius:12,padding:16,marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                  <div>
-                    <div style={{fontSize:11,opacity:0.6,textTransform:"uppercase",letterSpacing:1,fontWeight:600,marginBottom:4}}>Estimated Total ({orders.length} pax)</div>
-                    <div style={{fontSize:13,opacity:0.75}}>Based on individual orders</div>
-                  </div>
-                  <div style={{fontSize:26,fontWeight:800,color:"#D4A843"}}>${grandTotal.toFixed(2)}</div>
-                </div>
-              ):null;
-            })()}
-            {orders.map((order,i)=>(
-              <div key={i} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:12,border:"1px solid #E8E3DC"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-                  <div>
-                    <div style={{fontWeight:700,fontSize:16}}>{order.eid}</div>
-                    <div style={{fontSize:11,color:"#7A746C",marginTop:2}}>{order.timestamp}</div>
-                  </div>
-                  <span style={{background:"#E8F4ED",color:"#2E7D5A",borderRadius:20,padding:"4px 10px",fontSize:12,fontWeight:600}}>{order.items.length} items</span>
-                </div>
-                {order.items.map(item=>(
-                  <div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"6px 0",borderBottom:"1px solid #F0ECE7"}}>
-                    <span>• {item}</span>
-                    {PRICE_MAP[item]&&<span style={{color:"#D4A843",fontWeight:600,flexShrink:0,marginLeft:8}}>{PRICE_MAP[item]}</span>}
-                  </div>
-                ))}
-                {/* Per-person subtotal */}
-                {(()=>{
-                  const total = order.items.reduce((sum,item)=>{
-                    const p = PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
-                    return sum+p;
-                  },0);
-                  return total>0?(
-                    <div style={{display:"flex",justifyContent:"space-between",marginTop:10,paddingTop:8,borderTop:"2px solid #E8E3DC"}}>
-                      <span style={{fontWeight:700,fontSize:14,color:"#1C1C1A"}}>Subtotal</span>
-                      <span style={{fontWeight:800,fontSize:15,color:"#C0392B"}}>${total.toFixed(2)}</span>
-                    </div>
-                  ):null;
-                })()}
-              </div>
-            ))}
-          </div>
-        ):(
+        ):adminTab==="summary"?(
+          /* SUMMARY TAB */
           <div>
             <div style={{display:"flex",gap:6,marginBottom:14,flexWrap:"wrap"}}>
               {[["all","All"],["food","🍜 Food"],["drinks","🧋 Drinks"],["dessert","🍨 Desserts"]].map(([k,l])=>(
@@ -535,11 +485,88 @@ function App() {
               ))
             }
           </div>
+        ):adminTab==="individual"?(
+          /* BY PERSON TAB */
+          <div>
+            {(()=>{
+              const grandTotal=orders.reduce((sum,order)=>sum+order.items.reduce((s,item)=>{
+                const p=PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
+                return s+p;
+              },0),0);
+              return grandTotal>0?(
+                <div style={{background:"#1C1C1A",color:"#fff",borderRadius:12,padding:16,marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div>
+                    <div style={{fontSize:11,opacity:0.6,textTransform:"uppercase",letterSpacing:1,fontWeight:600,marginBottom:4}}>Estimated Total ({orders.length} pax)</div>
+                    <div style={{fontSize:13,opacity:0.75}}>Based on individual orders</div>
+                  </div>
+                  <div style={{fontSize:26,fontWeight:800,color:"#D4A843"}}>${grandTotal.toFixed(2)}</div>
+                </div>
+              ):null;
+            })()}
+            <div style={{fontSize:13,color:"#7A746C",marginBottom:12}}>{orders.length} order(s) received</div>
+            {orders.map((order,i)=>(
+              <div key={i} style={{background:"#fff",borderRadius:12,padding:16,marginBottom:12,border:"1px solid #E8E3DC"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                  <div>
+                    <div style={{fontWeight:700,fontSize:16}}>{order.eid}</div>
+                    <div style={{fontSize:11,color:"#7A746C",marginTop:2}}>{order.timestamp}</div>
+                  </div>
+                  <span style={{background:"#E8F4ED",color:"#2E7D5A",borderRadius:20,padding:"4px 10px",fontSize:12,fontWeight:600}}>{order.items.length} items</span>
+                </div>
+                {order.items.map(item=>(
+                  <div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:13,padding:"6px 0",borderBottom:"1px solid #F0ECE7"}}>
+                    <span>• {item}</span>
+                    {PRICE_MAP[item]&&<span style={{color:"#D4A843",fontWeight:600,flexShrink:0,marginLeft:8}}>{PRICE_MAP[item]}</span>}
+                  </div>
+                ))}
+                {(()=>{
+                  const total=order.items.reduce((sum,item)=>{
+                    const p=PRICE_MAP[item]?parseFloat(PRICE_MAP[item].replace("$","").trim()):0;
+                    return sum+p;
+                  },0);
+                  return total>0?(
+                    <div style={{display:"flex",justifyContent:"space-between",marginTop:10,paddingTop:8,borderTop:"2px solid #E8E3DC"}}>
+                      <span style={{fontWeight:700,fontSize:14,color:"#1C1C1A"}}>Subtotal</span>
+                      <span style={{fontWeight:800,fontSize:15,color:"#C0392B"}}>${total.toFixed(2)}</span>
+                    </div>
+                  ):null;
+                })()}
+              </div>
+            ))}
+          </div>
+        ):(
+          /* ORDER LIST TAB */
+          <div>
+            <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
+              {[["all","All"],["food","🍜 Food"],["drinks","🧋 Drinks"],["dessert","🍨 Desserts"]].map(([k,l])=>(
+                <button key={k} onClick={()=>setSummaryFilter(k)} style={{padding:"6px 14px",fontSize:12,fontWeight:600,borderRadius:20,border:"none",cursor:"pointer",fontFamily:"inherit",background:summaryFilter===k?"#1C1C1A":"#E8E3DC",color:summaryFilter===k?"#fff":"#1C1C1A"}}>{l}</button>
+              ))}
+            </div>
+            <div style={{fontSize:12,color:"#7A746C",marginBottom:12}}>Sorted by most ordered · easy to screenshot 📸</div>
+            {sortedSummary.length===0
+              ?<div style={{textAlign:"center",padding:32,color:"#7A746C",fontSize:14}}>No orders yet</div>
+              :<div style={{background:"#fff",borderRadius:12,border:"1px solid #E8E3DC",overflow:"hidden"}}>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 60px",background:"#1C1C1A",color:"#fff",padding:"10px 16px",fontSize:12,fontWeight:700,letterSpacing:1,textTransform:"uppercase",gap:12}}>
+                  <span>Item</span><span style={{textAlign:"center"}}>Qty</span>
+                </div>
+                {Object.entries(getFilteredSummary()).sort((a,b)=>b[1].length-a[1].length).map(([item,eids],i)=>(
+                  <div key={item} style={{display:"grid",gridTemplateColumns:"1fr 60px",padding:"11px 16px",borderBottom:"1px solid #F0ECE7",background:i%2===0?"#fff":"#FAFAF8",gap:12,alignItems:"center"}}>
+                    <span style={{fontSize:14,fontWeight:500,color:"#1C1C1A"}}>{item}</span>
+                    <span style={{fontSize:16,fontWeight:800,color:"#C0392B",textAlign:"center"}}>{eids.length}</span>
+                  </div>
+                ))}
+                <div style={{display:"grid",gridTemplateColumns:"1fr 60px",padding:"12px 16px",background:"#1C1C1A",color:"#fff",gap:12}}>
+                  <span style={{fontSize:13,fontWeight:700}}>Total</span>
+                  <span style={{fontSize:16,fontWeight:800,color:"#D4A843",textAlign:"center"}}>{Object.values(getFilteredSummary()).reduce((a,b)=>a+b.length,0)}</span>
+                </div>
+              </div>
+            }
+          </div>
         )}
       </div>
 
-      <div style={{padding:"12px 16px 0",display:"flex",gap:10}}>
-        <button onClick={()=>{setView("order");setAdminPw("");}} style={{flex:1,background:"#E8E3DC",color:"#1C1C1A",border:"none",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>← Back to Form</button>
+      <div style={{padding:"12px 16px 0"}}>
+        <button onClick={()=>{setView("order");setAdminPw("");}} style={{width:"100%",background:"#E8E3DC",color:"#1C1C1A",border:"none",borderRadius:10,padding:"13px 20px",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>← Back to Form</button>
       </div>
     </div>
   );
